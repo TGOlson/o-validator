@@ -25,13 +25,12 @@ validate(pattern, {
   title: 'Hello',
   isActive: true
 });
-
 // => true
 ```
 
-Note, this module is best used with a functional library to provide predicates, such as `lodash` or `ramda'.
+The validater runs each argument against the defined pattern, asserting a true outcome for each. This library currently assumes all arguments are optional.
 
-`validate` currently assumes all arguments are optional.
+Note, this module is best used with a functional library to provide predicates (`isString`, `isNotNull`, etc.), such as `lodash` or `ramda'.
 
 ## TODO
 
