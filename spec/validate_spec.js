@@ -48,6 +48,13 @@ describe('validate', function() {
     expect(result).toBe(false);
   });
 
+  describe('createPattern', function() {
+    it('should create a new validation pattern', function() {
+      var createdPattern = validate.createPattern(pattern.required, pattern.optional);
+      expect(createdPattern).toEqual(pattern);
+    });
+  });
+
   describe('all', function() {
     it('should return true all the predicates evaluate to true', function() {
       function isNotNull(v) {
@@ -111,6 +118,13 @@ describe('validate', function() {
       result = validate.required(pattern, args);
       expect(result).toBe(true);
     });
+
+    it('should return false if any additional arguments are present', function() {
+      args.isAdmin = true;
+
+      result = validate.required(pattern, args);
+      expect(result).toBe(false);
+    });
   });
 
   describe('optional', function() {
@@ -142,6 +156,13 @@ describe('validate', function() {
 
       result = validate.optional(pattern, args);
       expect(result).toBe(true);
+    });
+
+    it('should return false if any additional arguments are present', function() {
+      args.isAdmin = true;
+
+      result = validate.optional(pattern, args);
+      expect(result).toBe(false);
     });
   });
 

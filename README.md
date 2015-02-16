@@ -23,9 +23,13 @@ $ jasmine-node spec/
 var validate = require('validate');
 
 var pattern = {
-  title: validate.all(isString, isNotNull)
-  description: isString,
-  isActive: isBoolean
+  required: {
+    title: validate.all(isString, isNotNull)
+  },
+  optional: {
+    description: isString,
+    isActive: isBoolean
+  }
 };
 
 validate(pattern, {
@@ -35,35 +39,61 @@ validate(pattern, {
 // => true
 ```
 
-The validater runs each argument against the defined pattern, asserting a true outcome for each. This library currently assumes all arguments are optional.
+The validator runs each argument against the defined pattern, asserting a true outcome for each.
 
 Note, this module is best used with a functional library to provide predicates (`isString`, `isNotNull`, etc.), such as `lodash` or `ramda`.
 
 ## Methods
 
-```
+```js
+/**
+ * Validates a set of arguments against an argument pattern
+ * Object -> Object -> Boolean
+ */
 validate
 ```
 
-```
+```js
+/**
+ * Validates arguments, mandating each one defined in the pattern is present
+ * Object -> Object -> Boolean
+ */
 validate.required
 ```
 
-```
+```js
+/**
+ * Validates arguments, without requirement of all properties being present
+ * Object -> Object -> Boolean
+ */
 validate.optional
 ```
 
+```js
+/**
+ * Creates a pattern with required properties for the validator.
+ * Object -> Object -> Object
+ */
+validate.createPattern
 ```
+
+```js
+/**
+ * Asserts all supplied predicates return true for provided value
+ * Predicates -> * -> Boolean
+ */
 validate.all
 ```
 
-```
+```js
+/**
+ * Asserts any supplied predicates return true for provided value
+ * Predicates -> * -> Boolean
+ */
 validate.any
 ```
 
 ## TODO
 
-* document additional helper methods (`all`, `any`)
-* allow interface for defining required and optional args
-* remove dependancy on lodash
-* expose common predicates on validator (for more user friendly usages)
+* Remove dependency on lodash
+* Expose common predicates on validator (for more user friendly usages)
