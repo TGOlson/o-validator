@@ -113,8 +113,8 @@ var isValid = validate.all(p1, p2, ...);
 isValid(<value>) -> Boolean
 
 // note: validate.all must be called incrementally
-// first, be passing in any list of predicates to match
-// and then secondly, passing in a value to assert against the predicates
+// first, by passing in any list of predicates to match
+// and then secondly, by passing in a value to assert the predicates against
 ```
 
 #### validate.any
@@ -130,8 +130,8 @@ var isValid = validate.any(p1, p2, ...);
 isValid(<value>) -> Boolean
 
 // note: validate.any must be called incrementally
-// first, be passing in any list of predicates to match
-// and then secondly, passing in a value to assert against the predicates
+// first, by passing in any list of predicates to match
+// and then secondly, by passing in a value to assert the predicates against
 ```
 
 ## TODO
