@@ -39,11 +39,13 @@ validate(pattern, {
 // => true
 ```
 
-The validator runs each argument against the defined pattern, asserting a true outcome for each.
+The validator runs each argument against the defined pattern, asserting a true outcome for each. Properties defined as required in the pattern must exist in the provided arguments and must return true for the provided predicate. Properties defined as optional will only be asserted against the predicate if present in the arguments.
 
 Note, this module is best used with a functional library to provide predicates (`isString`, `isNotNull`, etc.), such as `lodash` or `ramda`.
 
-## Methods
+See more complex usage in the [examples](https://github.com/TGOlson/validate/tree/master/examples).
+
+## Available Methods
 
 ```js
 /**
@@ -51,6 +53,16 @@ Note, this module is best used with a functional library to provide predicates (
  * Object -> Object -> Boolean
  */
 validate
+
+// Example:
+validate(<pattern>, <args>) -> Boolean
+
+// note: pattern must contain either or both a 'required' or 'optional' property,
+// and must be an object in the form of:
+// {
+//   required: {<required-props>},
+//   optional: {<optional-props>}
+// }
 ```
 
 ```js
@@ -59,6 +71,9 @@ validate
  * Object -> Object -> Boolean
  */
 validate.required
+
+// Example:
+validate.required(<pattern>, <args>) -> Boolean
 ```
 
 ```js
@@ -67,6 +82,9 @@ validate.required
  * Object -> Object -> Boolean
  */
 validate.optional
+
+// Example:
+validate.optional(<pattern>, <args>) -> Boolean
 ```
 
 ```js
@@ -75,6 +93,15 @@ validate.optional
  * Object -> Object -> Object
  */
 validate.createPattern
+
+// Example:
+validate.createPattern(<required-props>, <optional-props>) -> Object
+
+// note: returned object will be a valid pattern for validation in the form of:
+// {
+//   required: {<required-props>},
+//   optional: {<optional-props>}
+// }
 ```
 
 ```js
@@ -83,6 +110,16 @@ validate.createPattern
  * Predicates -> * -> Boolean
  */
 validate.all
+
+// Example
+validate.all(p1, p2, ...) -> Function
+
+var isValid = validate.all(p1, p2, ...);
+isValid(<value>) -> Boolean
+
+// note: validate.all must be called incrementally
+// first, be passing in any list of predicates to match
+// and then secondly, passing in a value to assert against the predicates
 ```
 
 ```js
@@ -91,6 +128,16 @@ validate.all
  * Predicates -> * -> Boolean
  */
 validate.any
+
+// Example
+validate.any(p1, p2, ...) -> Function
+
+var isValid = validate.any(p1, p2, ...);
+isValid(<value>) -> Boolean
+
+// note: validate.any must be called incrementally
+// first, be passing in any list of predicates to match
+// and then secondly, passing in a value to assert against the predicates
 ```
 
 ## TODO
