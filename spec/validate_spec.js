@@ -24,6 +24,11 @@ describe('validate', function() {
     };
   });
 
+  it('should throw an error if no required or optional arguments are declared in the pattern', function() {
+    var validateEmpty = validate.bind(null, {}, args);
+    expect(validateEmpty).toThrow('Must provide at least one required or optional pattern.');
+  });
+
   it('should return true if all provided arguments are valid', function() {
     result = validate(pattern, args);
     expect(result).toBe(true);
@@ -80,27 +85,46 @@ describe('validate', function() {
   });
 
   describe('required', function() {
+    beforeEach(function() {
+      pattern = {
+        title: _.isString
+      };
+
+      args = {
+        title: 'Hello',
+      };
+    });
+
     it('should return false if an argument is missing', function() {
-      result = validate.required(pattern, args);
+      result = validate.required(pattern, {});
       expect(result).toBe(false);
     });
 
     it('should false true if no arguments are missing but some are illegal', function() {
-      args.description = null;
+      args.title = 123;
 
       result = validate.required(pattern, args);
       expect(result).toBe(false);
     });
 
     it('should return true if no arguments are missing or illegal', function() {
-      args.description = 'Something interesting';
-
       result = validate.required(pattern, args);
       expect(result).toBe(true);
     });
   });
 
   describe('optional', function() {
+    beforeEach(function() {
+      pattern = {
+        title: _.isString,
+        description: _.isString
+      };
+
+      args = {
+        title: 'Hello'
+      };
+    });
+
     it('should return true if an argument is missing but non are illegal', function() {
       result = validate.optional(pattern, args);
       expect(result).toBe(true);
