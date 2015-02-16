@@ -9,9 +9,13 @@ describe('validate', function() {
 
   beforeEach(function() {
     pattern = {
-      title: _.isString,
-      description: _.isString,
-      isActive: _.isBoolean
+      required: {
+        title: _.isString
+      },
+      optional: {
+        description: _.isString,
+        isActive: _.isBoolean
+      }
     };
 
     args = {
@@ -32,8 +36,11 @@ describe('validate', function() {
     expect(result).toBe(false);
   });
 
-  xit('should return false if any required arguments are missing', function() {
-    // TODO: implement this functionlity
+  it('should return false if any additional arguments are present', function() {
+    args.isAdmin = true;
+
+    result = validate(pattern, args);
+    expect(result).toBe(false);
   });
 
   describe('all', function() {
@@ -69,6 +76,48 @@ describe('validate', function() {
       var isStringOrNumber = validate.any(_.isString, _.isNumber);
 
       expect(isStringOrNumber(null)).toBe(false);
+    });
+  });
+
+  describe('required', function() {
+    it('should return false if an argument is missing', function() {
+      result = validate.required(pattern, args);
+      expect(result).toBe(false);
+    });
+
+    it('should false true if no arguments are missing but some are illegal', function() {
+      args.description = null;
+
+      result = validate.required(pattern, args);
+      expect(result).toBe(false);
+    });
+
+    it('should return true if no arguments are missing or illegal', function() {
+      args.description = 'Something interesting';
+
+      result = validate.required(pattern, args);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('optional', function() {
+    it('should return true if an argument is missing but non are illegal', function() {
+      result = validate.optional(pattern, args);
+      expect(result).toBe(true);
+    });
+
+    it('should false true if no arguments are missing but some are illegal', function() {
+      args.description = null;
+
+      result = validate.optional(pattern, args);
+      expect(result).toBe(false);
+    });
+
+    it('should return true if no arguments are missing or illegal', function() {
+      args.description = 'Something interesting';
+
+      result = validate.optional(pattern, args);
+      expect(result).toBe(true);
     });
   });
 
