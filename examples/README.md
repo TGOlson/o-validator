@@ -1,4 +1,4 @@
-* Validation Examples
+# Validation Examples
 
 This directory shows an example of how validations can be run in a more complex scenario.
 

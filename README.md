@@ -47,13 +47,12 @@ See more complex usage in the [examples](https://github.com/TGOlson/validate/tre
 
 ## Available Methods
 
-```js
-/**
- * Validates a set of arguments against an argument pattern
- * Object -> Object -> Boolean
- */
-validate
+#### validate
 
+Validates a set of arguments against an argument pattern
+
+Object -> Object -> Boolean
+```js
 // Example:
 validate(<pattern>, <args>) -> Boolean
 
@@ -65,35 +64,32 @@ validate(<pattern>, <args>) -> Boolean
 // }
 ```
 
-```js
-/**
- * Validates arguments, mandating each one defined in the pattern is present
- * Object -> Object -> Boolean
- */
-validate.required
+#### validate.required
 
+Validates arguments, mandating each one defined in the pattern is present
+
+Object -> Object -> Boolean
+```js
 // Example:
 validate.required(<pattern>, <args>) -> Boolean
 ```
 
-```js
-/**
- * Validates arguments, without requirement of all properties being present
- * Object -> Object -> Boolean
- */
-validate.optional
+#### validate.optional
 
+Validates arguments, without requirement of all properties being present
+
+Object -> Object -> Boolean
+```js
 // Example:
 validate.optional(<pattern>, <args>) -> Boolean
 ```
 
-```js
-/**
- * Creates a pattern with required properties for the validator.
- * Object -> Object -> Object
- */
-validate.createPattern
+#### validate.createPattern
 
+Creates a pattern with required properties for the validator.
+
+Object -> Object -> Object
+```js
 // Example:
 validate.createPattern(<required-props>, <optional-props>) -> Object
 
