@@ -49,9 +49,9 @@ See more complex usage in the [examples](https://github.com/TGOlson/validate/tre
 
 #### validate
 
-Validates a set of arguments against an argument pattern
-
 Object -> Object -> Boolean
+
+Validates a set of arguments against a defined argument pattern.
 ```js
 // Example:
 validate(<pattern>, <args>) -> Boolean
@@ -66,9 +66,9 @@ validate(<pattern>, <args>) -> Boolean
 
 #### validate.required
 
-Validates arguments, mandating each one defined in the pattern is present
-
 Object -> Object -> Boolean
+
+Validates arguments, mandating each one defined in the pattern is present. This method assume all properties are required, and therefore a `required` property is not necessary in the pattern.
 ```js
 // Example:
 validate.required(<pattern>, <args>) -> Boolean
@@ -76,9 +76,9 @@ validate.required(<pattern>, <args>) -> Boolean
 
 #### validate.optional
 
-Validates arguments, without requirement of all properties being present
-
 Object -> Object -> Boolean
+
+Validates arguments, without requirement of all properties being present. This method assume all properties are optional, and therefore an `optional` property is not necessary in the pattern.
 ```js
 // Example:
 validate.optional(<pattern>, <args>) -> Boolean
@@ -86,9 +86,9 @@ validate.optional(<pattern>, <args>) -> Boolean
 
 #### validate.createPattern
 
-Creates a pattern with required properties for the validator.
-
 Object -> Object -> Object
+
+Creates a pattern with provided properties for the validator.
 ```js
 // Example:
 validate.createPattern(<required-props>, <optional-props>) -> Object
@@ -100,13 +100,12 @@ validate.createPattern(<required-props>, <optional-props>) -> Object
 // }
 ```
 
-```js
-/**
- * Asserts all supplied predicates return true for provided value
- * Predicates -> * -> Boolean
- */
-validate.all
+#### validate.all
 
+Asserts all supplied predicates return true for provided value.
+
+Predicates -> * -> Boolean
+```js
 // Example
 validate.all(p1, p2, ...) -> Function
 
@@ -118,13 +117,12 @@ isValid(<value>) -> Boolean
 // and then secondly, passing in a value to assert against the predicates
 ```
 
-```js
-/**
- * Asserts any supplied predicates return true for provided value
- * Predicates -> * -> Boolean
- */
-validate.any
+#### validate.any
 
+Asserts any supplied predicate will return true for provided value.
+
+Predicates -> * -> Boolean
+```js
 // Example
 validate.any(p1, p2, ...) -> Function
 
@@ -140,3 +138,11 @@ isValid(<value>) -> Boolean
 
 * Remove dependency on lodash
 * Expose common predicates on validator (for more user friendly usages)
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
