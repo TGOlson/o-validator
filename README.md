@@ -24,13 +24,16 @@ var validate = require('validate');
 
 var pattern = {
   title: validate.required(isString)
-  description: validate.isAll(isString, hasLengthGreaterThan(5), hasLengthLessThan(100)),
-  isActive: isBoolean
+  description: validate.isAll(isString, hasLengthGreaterThan(5)),
+  isActive: isBoolean,
+  tags: isArray
 };
 
 validate(pattern, {
   title: 'Hi There',
+  description: 'This is a great post.',
   isActive: true
+  // tags is undefined, which is ok - properties are assumed to be optional
 });
 // => true
 ```
