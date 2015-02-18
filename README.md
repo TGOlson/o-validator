@@ -52,32 +52,29 @@ Object -> Object -> Boolean
 
 Validates arguments against the provided pattern.
 ```js
-// Example:
 validate(<pattern>, <args>) -> Boolean
 ```
 
 ### Logical Utilities
 
+Note: all logical utilities must be called incrementally (`fn(v1)(v2)`) as shown in the examples below.
+
 #### validate.required
 
 Predicate -> Predicate
 
-Returns a predicate that is satisfied if the supplied predicate is satisfied and the provided value is defined.
+Returns a predicate that is satisfied if the supplied predicate is satisfied and the provided value is not undefined. This should be used to denote that a property is required, since otherwise properties as assumed to be optional.
 ```js
-// Example:
 validate.required(p) -> Function
 validate.required(p)(<value>) -> Boolean
-
-// note: validate.required must be called incrementally as shown in the example above
 ```
 
 #### validate.optional
 
-Object -> Object -> Boolean
+Predicate -> Predicate
 
-Returns a predicate that is satisfied if the supplied predicate is satisfied or the provided value is undefined. Note: by default `validate` assumes all properties are optional. This is the shorthand equivalent to `isAny(isUndefined, p)`.
+Returns a predicate that is satisfied if the supplied predicate is satisfied or the provided value is undefined. Note: using this utility is probably not necessary to use often, since `validate` assumes all properties are optional by default. This is the shorthand equivalent to `isAny(isUndefined, p)`.
 ```js
-// Example:
 validate.optional(p) -> Function
 validate.optional(p)(<value>) -> Boolean
 
@@ -90,11 +87,8 @@ Predicates -> Predicate
 
 Returns a predicate that is satisfied if all supplied predicates are satisfied for the provided value.
 ```js
-// Example
 validate.isAll(p1, p2, ...) -> Function
 validate.isAll(p1, p2, ...)(<value>) -> Boolean
-
-// note: validate.isAll must be called incrementally as shown in the example above
 ```
 
 #### validate.isAny
@@ -103,11 +97,8 @@ Predicates -> Predicate
 
 Returns a predicate that is satisfied if any of the supplied predicates are satisfied for the provided value.
 ```js
-// Example
 validate.isAny(p1, p2, ...) -> Function
 validate.isAny(p1, p2, ...)(<value>) -> Boolean
-
-// note: validate.isAny must be called incrementally as shown in the example above
 ```
 
 #### validate.isNot
@@ -116,11 +107,8 @@ Predicate -> Predicate
 
 Returns a predicate that inverts the supplied predicate.
 ```js
-// Example
 validate.isNot(p) -> Function
 validate.isNot(p)(<value>) -> Boolean
-
-// note: validate.isNot must be called incrementally as shown in the example above
 ```
 
 ## Contributing
