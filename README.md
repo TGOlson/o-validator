@@ -77,8 +77,6 @@ Returns a predicate that is satisfied if the supplied predicate is satisfied or 
 ```js
 validate.optional(p) -> Function
 validate.optional(p)(<value>) -> Boolean
-
-// note: validate.optional must be called incrementally as shown in the example above
 ```
 
 #### validate.isAll
