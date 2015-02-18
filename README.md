@@ -23,8 +23,8 @@ $ jasmine-node spec/
 var validate = require('validate');
 
 var pattern = {
-  title: validate.isAll(isString, hasLengthGreaterThan(5), hasLengthLessThan(20))
-  description: validate.isOptional(isString),
+  title: validate.required(isString)
+  description: validate.isAll(isString, hasLengthGreaterThan(5), hasLengthLessThan(100)),
   isActive: isBoolean
 };
 
@@ -35,7 +35,7 @@ validate(pattern, {
 // => true
 ```
 
-The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are required to exist in the provided arguments and must return true for the provided predicate.
+The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are assumed to be optional unless declared otherwise.
 
 Note, this module is best used with a functional library to provide predicates (`isString`, `isNull`, etc.), such as `lodash` or `ramda`.
 
@@ -43,39 +43,43 @@ See more complex usage in the [examples](https://github.com/TGOlson/validate/tre
 
 ## Available Methods
 
-### Core Validators
-
 #### validate
 
 Object -> Object -> Boolean
 
-Validates arguments, mandating each property defined in the pattern is present.
+Validates arguments against the provided pattern.
 ```js
 // Example:
 validate(<pattern>, <args>) -> Boolean
 ```
 
+### Logical Utilities
+
 #### validate.required
 
-Object -> Object -> Boolean
+Predicate -> Predicate
 
-Validates arguments, mandating each property defined in the pattern is present. Note: this is an alias for the `validate` method.
+Returns a predicate that is satisfied if the supplied predicate is satisfied and the provided value is defined.
 ```js
 // Example:
-validate.required(<pattern>, <args>) -> Boolean
+validate.required(p) -> Function
+validate.required(p)(<value>) -> Boolean
+
+// note: validate.required must be called incrementally as shown in the example above
 ```
 
 #### validate.optional
 
 Object -> Object -> Boolean
 
-Validates arguments, without requirement of all properties being present.
+Returns a predicate that is satisfied if the supplied predicate is satisfied or the provided value is undefined. Note: by default `validate` assumes all properties are optional. This is the shorthand equivalent to `isAny(isUndefined, p)`.
 ```js
 // Example:
-validate.optional(<pattern>, <args>) -> Boolean
-```
+validate.optional(p) -> Function
+validate.optional(p)(<value>) -> Boolean
 
-### Logical Utilities
+// note: validate.optional must be called incrementally as shown in the example above
+```
 
 #### validate.isAll
 
@@ -103,19 +107,6 @@ validate.isAny(p1, p2, ...)(<value>) -> Boolean
 // note: validate.isAny must be called incrementally as shown in the example above
 ```
 
-#### validate.isOptional
-
-Predicate -> Predicate
-
-Returns a predicate that is satisfied if the supplied predicate is satisfied or the provided value is undefined. Note: `isOptional(p)` is the shorthand equivalent to `isAny(isUndefined, p)`.
-```js
-// Example
-validate.isOptional(p) -> Function
-validate.isOptional(p)(<value>) -> Boolean
-
-// note: validate.isOptional must be called incrementally as shown in the example above
-```
-
 #### validate.isNot
 
 Predicate -> Predicate
@@ -128,11 +119,6 @@ validate.isNot(p)(<value>) -> Boolean
 
 // note: validate.isNot must be called incrementally as shown in the example above
 ```
-
-## TODO
-
-* Remove dependency on lodash
-* Expose common predicates on validator (for more user friendly usages)
 
 ## Contributing
 
