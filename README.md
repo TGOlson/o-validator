@@ -23,21 +23,21 @@ $ jasmine-node spec/
 var validate = require('validate');
 
 var pattern = {
-  title: validate.isAll(isString, isNotNull)
+  title: validate.isAll(isString, hasLengthGreaterThan(5), hasLengthLessThan(20))
   description: validate.isOptional(isString),
   isActive: isBoolean
 };
 
 validate(pattern, {
-  title: 'Hello',
+  title: 'Hi There',
   isActive: true
 });
 // => true
 ```
 
-The validator runs each argument against the defined pattern, asserting a true outcome for each. Properties defined pattern are required to exist in the provided arguments and must return true for the provided predicate.
+The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are required to exist in the provided arguments and must return true for the provided predicate.
 
-Note, this module is best used with a functional library to provide predicates (`isString`, `isNotNull`, etc.), such as `lodash` or `ramda`.
+Note, this module is best used with a functional library to provide predicates (`isString`, `isNull`, etc.), such as `lodash` or `ramda`.
 
 See more complex usage in the [examples](https://github.com/TGOlson/validate/tree/master/examples).
 
