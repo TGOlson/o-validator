@@ -23,13 +23,9 @@ $ jasmine-node spec/
 var validate = require('validate');
 
 var pattern = {
-  required: {
-    title: validate.all(isString, isNotNull)
-  },
-  optional: {
-    description: isString,
-    isActive: isBoolean
-  }
+  title: validate.isAll(isString, isNotNull)
+  description: validate.isOptional(isString),
+  isActive: isBoolean
 };
 
 validate(pattern, {
@@ -39,7 +35,7 @@ validate(pattern, {
 // => true
 ```
 
-The validator runs each argument against the defined pattern, asserting a true outcome for each. Properties defined as required in the pattern must exist in the provided arguments and must return true for the provided predicate. Properties defined as optional will only be asserted against the predicate if present in the arguments.
+The validator runs each argument against the defined pattern, asserting a true outcome for each. Properties defined pattern are required to exist in the provided arguments and must return true for the provided predicate.
 
 Note, this module is best used with a functional library to provide predicates (`isString`, `isNotNull`, etc.), such as `lodash` or `ramda`.
 
@@ -47,28 +43,23 @@ See more complex usage in the [examples](https://github.com/TGOlson/validate/tre
 
 ## Available Methods
 
+### Core Validators
+
 #### validate
 
 Object -> Object -> Boolean
 
-Validates a set of arguments against a defined argument pattern.
+Validates arguments, mandating each property defined in the pattern is present.
 ```js
 // Example:
 validate(<pattern>, <args>) -> Boolean
-
-// note: pattern must contain either or both a 'required' or 'optional' property,
-// and must be an object in the form of:
-// {
-//   required: {<required-props>},
-//   optional: {<optional-props>}
-// }
 ```
 
 #### validate.required
 
 Object -> Object -> Boolean
 
-Validates arguments, mandating each one defined in the pattern is present. This method assume all properties are required, and therefore a `required` property is not necessary in the pattern.
+Validates arguments, mandating each property defined in the pattern is present. Note: this is an alias for the `validate` method.
 ```js
 // Example:
 validate.required(<pattern>, <args>) -> Boolean
@@ -78,60 +69,64 @@ validate.required(<pattern>, <args>) -> Boolean
 
 Object -> Object -> Boolean
 
-Validates arguments, without requirement of all properties being present. This method assume all properties are optional, and therefore an `optional` property is not necessary in the pattern.
+Validates arguments, without requirement of all properties being present.
 ```js
 // Example:
 validate.optional(<pattern>, <args>) -> Boolean
 ```
 
-#### validate.createPattern
+### Logical Utilities
 
-Object -> Object -> Object
+#### validate.isAll
 
-Creates a pattern with provided properties for the validator.
-```js
-// Example:
-validate.createPattern(<required-props>, <optional-props>) -> Object
+Predicates -> Predicate
 
-// note: returned object will be a valid pattern for validation in the form of:
-// {
-//   required: {<required-props>},
-//   optional: {<optional-props>}
-// }
-```
-
-#### validate.all
-
-Asserts all supplied predicates return true for provided value.
-
-Predicates -> * -> Boolean
+Returns a predicate that is satisfied if all supplied predicates are satisfied for the provided value.
 ```js
 // Example
-validate.all(p1, p2, ...) -> Function
+validate.isAll(p1, p2, ...) -> Function
+validate.isAll(p1, p2, ...)(<value>) -> Boolean
 
-var isValid = validate.all(p1, p2, ...);
-isValid(<value>) -> Boolean
-
-// note: validate.all must be called incrementally
-// first, by passing in any list of predicates to match
-// and then secondly, by passing in a value to assert the predicates against
+// note: validate.isAll must be called incrementally as shown in the example above
 ```
 
-#### validate.any
+#### validate.isAny
 
-Asserts any supplied predicate will return true for provided value.
+Predicates -> Predicate
 
-Predicates -> * -> Boolean
+Returns a predicate that is satisfied if any of the supplied predicates are satisfied for the provided value.
 ```js
 // Example
-validate.any(p1, p2, ...) -> Function
+validate.isAny(p1, p2, ...) -> Function
+validate.isAny(p1, p2, ...)(<value>) -> Boolean
 
-var isValid = validate.any(p1, p2, ...);
-isValid(<value>) -> Boolean
+// note: validate.isAny must be called incrementally as shown in the example above
+```
 
-// note: validate.any must be called incrementally
-// first, by passing in any list of predicates to match
-// and then secondly, by passing in a value to assert the predicates against
+#### validate.isOptional
+
+Predicate -> Predicate
+
+Returns a predicate that is satisfied if the supplied predicate is satisfied or the provided value is undefined. Note: `isOptional(p)` is the shorthand equivalent to `isAny(isUndefined, p)`.
+```js
+// Example
+validate.isOptional(p) -> Function
+validate.isOptional(p)(<value>) -> Boolean
+
+// note: validate.isOptional must be called incrementally as shown in the example above
+```
+
+#### validate.isNot
+
+Predicate -> Predicate
+
+Returns a predicate that inverts the supplied predicate.
+```js
+// Example
+validate.isNot(p) -> Function
+validate.isNot(p)(<value>) -> Boolean
+
+// note: validate.isNot must be called incrementally as shown in the example above
 ```
 
 ## TODO
