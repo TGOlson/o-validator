@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash');
 
 var validate = require('../lib/validate');
@@ -41,14 +43,7 @@ describe('validate', function() {
 
   describe('required', function() {
     beforeEach(function() {
-      pattern = {
-        title: validate.required(_.isString),
-        description: validate.isAny(_.isUndefined, _.isString)
-      };
-
-      args = {
-        title: 'Hello',
-      };
+      pattern.title = validate.required(_.isString);
     });
 
     it('should return false if a required argument is missing', function() {
@@ -67,7 +62,6 @@ describe('validate', function() {
       result = validate(pattern, args);
       expect(result).toBe(false);
     });
-
 
     it('should return false if any additional arguments are present', function() {
       args.isAdmin = true;
@@ -107,6 +101,5 @@ describe('validate', function() {
       expect(isNotNull(null)).toBe(false);
     });
   });
-
 
 });
