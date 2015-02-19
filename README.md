@@ -33,7 +33,7 @@ validate(pattern, {
   title: 'Hi There',
   description: 'This is a great post.',
   isActive: true
-  // tags is undefined, which is ok - properties are assumed to be optional
+  // tags are undefined - but that is ok, validator treats them as optional
 });
 // => true
 ```

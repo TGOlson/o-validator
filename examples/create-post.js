@@ -1,22 +1,7 @@
-# Validation Examples
+'use strict';
 
-This directory shows an example of how validations can be run in a more complex scenario.
-
-Check out `create-post.js` to see how the validator is constructing and some of the advanced methods that are used.
-
-To view the output, run
-
-```
-$ node create-post.js
-```
-
-Try changing the validator or the data in `data.js` to see how validation results change.
-
-Validation example from `create-post.js`:
-
-```js
-var validate = require('validate'),
-    p = require('predicates'); // not a real npm module
+var validate = require('../lib/validate'),
+    p = require('./predicates');
 
 // composing a complex validation predicate and saving it for later
 var isValidBodyText = validate.isAll(
@@ -43,4 +28,14 @@ var validatePost = validate({
       related   : validate.isAny(p.isArray, p.isNull)
     })
 });
-```
+
+function createPost(args) {
+  if(!validatePost(args)) {
+    throw new Error('Invalid post arguments.');
+  }
+
+  // else create post ...
+  console.log('Post arguments are valid! Creating a new post...');
+}
+
+createPost(require('./data').post);
