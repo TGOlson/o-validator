@@ -1,7 +1,7 @@
 'use strict';
 
 var validate = require('../lib/validate'),
-    p = require('./predicates');
+    p        = require('./predicates');
 
 // composing a complex validation predicate and saving it for later
 var isValidBodyText = validate.isAll(
@@ -9,6 +9,7 @@ var isValidBodyText = validate.isAll(
   p.hasLengthBetween(20, 100)
 );
 
+// save the newly created validator
 var validatePost = validate({
 
   // required arguments
@@ -23,13 +24,15 @@ var validatePost = validate({
   tags        : p.isArray,
 
   // recursively validating - the validate method is a predicate itself
-  metadata    : validate({
+  metadata : validate({
       wordCount : validate.required(p.isNumber),
       related   : validate.isAny(p.isArray, p.isNull)
     })
 });
 
 function createPost(args) {
+
+  // invoke the validator against arbitrary provided arguments
   if(!validatePost(args)) {
     throw new Error('Invalid post arguments.');
   }

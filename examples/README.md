@@ -16,7 +16,7 @@ Validation example from `create-post.js`:
 
 ```js
 var validate = require('validate'),
-    p = require('predicates'); // not a real npm module
+    p        = require('./predicates');
 
 // composing a complex validation predicate and saving it for later
 var isValidBodyText = validate.isAll(
@@ -24,6 +24,7 @@ var isValidBodyText = validate.isAll(
   p.hasLengthBetween(20, 100)
 );
 
+// save the newly created validator
 var validatePost = validate({
 
   // required arguments
@@ -38,9 +39,12 @@ var validatePost = validate({
   tags        : p.isArray,
 
   // recursively validating - the validate method is a predicate itself
-  metadata    : validate({
+  metadata : validate({
       wordCount : validate.required(p.isNumber),
       related   : validate.isAny(p.isArray, p.isNull)
     })
 });
+
+// invoke the validator against arbitrary provided arguments
+validatePost({<PostArgs>}); // -> Boolean
 ```
