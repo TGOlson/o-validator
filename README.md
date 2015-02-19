@@ -23,16 +23,16 @@ $ jasmine-node spec/
 var validate = require('validate');
 
 var pattern = {
-  title: validate.required(isString)
-  description: validate.isAll(isString, hasLengthGreaterThan(5)),
-  isActive: isBoolean,
-  tags: isArray
+  title       : validate.required(isString)
+  description : validate.isAll(isString, hasLengthGreaterThan(5)),
+  isActive    : isBoolean,
+  tags        : isArray
 };
 
 validate(pattern, {
-  title: 'Hi There',
-  description: 'This is a great post.',
-  isActive: true
+  title       : 'Hi There',
+  description : 'This is a great post.',
+  isActive    : true
   // tags are undefined - but that is ok, validator treats them as optional
 });
 // => true
