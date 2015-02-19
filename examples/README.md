@@ -18,7 +18,7 @@ Validation example from `create-post.js`:
 var validate = require('validate'),
     p        = require('./predicates');
 
-// composing a complex validation predicate and saving it for later
+// compose a complex validation predicate and saving it for later
 var isValidBodyText = validate.isAll(
   validate.isAny(p.isString, p.isMarkdown, p.isMarkup),
   p.hasLengthBetween(20, 100)

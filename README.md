@@ -42,7 +42,42 @@ The validator runs each argument against the defined validation pattern, asserti
 
 Note, this module is best used with a functional library to provide predicates (`isString`, `isNull`, etc.), such as `lodash` or `ramda`.
 
-See more complex usage in the [examples](https://github.com/TGOlson/validate/tree/master/examples).
+A more advanced example (can also be found in [/examples](https://github.com/TGOlson/validate/tree/master/examples)):
+
+```js
+var validate = require('validate'),
+    p        = require('./predicates');
+
+// compose a complex validation predicate and saving it for later
+var isValidBodyText = validate.isAll(
+  validate.isAny(p.isString, p.isMarkdown, p.isMarkup),
+  p.hasLengthBetween(20, 100)
+);
+
+// save the newly created validator
+var validatePost = validate({
+
+  // required arguments
+  title  : validate.required(validate.isAll(p.isString, p.hasLengthBetween(5, 30))),
+  author : validate.required(p.isString),
+  body   : validate.required(isValidBodyText),
+
+  // optional arguments
+  description : validate.isAll(p.isString, p.hasLengthBetween(10, 100)),
+  date        : validate.isAny(p.isDate, p.isDateString),
+  category    : p.isString,
+  tags        : p.isArray,
+
+  // recursively validating - the validate method is a predicate itself
+  metadata : validate({
+      wordCount : validate.required(p.isNumber),
+      related   : validate.isAny(p.isArray, p.isNull)
+    })
+});
+
+// invoke the validator against arbitrary provided arguments
+validatePost({<PostArgs>}); // -> Boolean
+```
 
 ## Available Methods
 
