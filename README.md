@@ -109,6 +109,11 @@ validate.isNot(p) -> Function
 validate.isNot(p)(<value>) -> Boolean
 ```
 
+## TODO
+
+* Add custom error handling `validate.withErrors(<pattern>, <values>)`. Consider adding `getErrors`, etc. Will probably include helper method to map pattern values for general usage.
+* Document new error handling methods.
+
 ## Contributing
 
 1. Fork it
