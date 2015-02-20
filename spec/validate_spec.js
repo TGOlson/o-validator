@@ -102,4 +102,25 @@ describe('validate', function() {
     });
   });
 
+  describe('validateOrThrow', function() {
+    var validator;
+
+    beforeEach(function() {
+      validator = validate(pattern);
+      args.title = null;
+    });
+
+    it('should throw an error if the arguments are invalid', function() {
+      var validateOrThrow = validate.orThrow.bind(null, validator, args);
+      expect(validateOrThrow).toThrow('Input arguments include illegal values or properties.');
+    });
+
+    it('should not throw an error if the arguments are valid', function() {
+      args.title = 'Something cool.';
+
+      var validateOrThrow = validate.orThrow.bind(null, validator, args);
+      expect(validateOrThrow).not.toThrow();
+    });
+  });
+
 });
