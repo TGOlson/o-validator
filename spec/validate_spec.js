@@ -102,6 +102,31 @@ describe('validate', function() {
     });
   });
 
+  describe('getErrors', function() {
+    it('should return an empty list if no values are illegal', function() {
+      var errors = validate.getErrors(pattern, args);
+      expect(errors).toEqual([]);
+    });
+
+    it('should return a list of errors when passed illegal values', function() {
+      args.title = null;
+      args.isAdmin = true;
+
+      var errors = validate.getErrors(pattern, args);
+
+      expect(errors).toEqual([
+        {
+          property: 'title',
+          message: 'Illegal or missing value for property: title'
+        },
+        {
+          property: 'isAdmin',
+          message: 'Illegal or missing value for property: isAdmin'
+        }
+      ]);
+    });
+  });
+
   describe('validateOrThrow', function() {
     var validator;
 
@@ -111,15 +136,15 @@ describe('validate', function() {
     });
 
     it('should throw an error if the arguments are invalid', function() {
-      var validateOrThrow = validate.orThrow.bind(null, validator, args);
-      expect(validateOrThrow).toThrow('Input arguments include illegal values or properties.');
+      var validateOrThrow = validate.orThrow.bind(null, pattern, args);
+      expect(validateOrThrow).toThrow('Illegal or missing value for property: title');
     });
 
-    it('should not throw an error if the arguments are valid', function() {
+    it('should return null if the arguments are valid', function() {
       args.title = 'Something cool.';
 
-      var validateOrThrow = validate.orThrow.bind(null, validator, args);
-      expect(validateOrThrow).not.toThrow();
+      var validateOrThrow = validate.orThrow(pattern, args);
+      expect(validateOrThrow).toBe(null);
     });
   });
 
