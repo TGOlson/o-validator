@@ -109,7 +109,10 @@ describe('validate', function() {
     });
 
     it('should return a list of errors when passed illegal values', function() {
-      args.title = null;
+      pattern.title = validate.required(_.isString);
+
+      args.title = undefined;
+      args.description = 123;
       args.isAdmin = true;
 
       var errors = validate.getErrors(pattern, args);
@@ -117,11 +120,18 @@ describe('validate', function() {
       expect(errors).toEqual([
         {
           property: 'title',
-          message: 'Illegal or missing value for property: title'
+          errorType: 'Required',
+          message: 'Required value missing for property "title"'
+        },
+        {
+          property: 'description',
+          errorType: 'Type',
+          message: 'Illegal value for property "description"'
         },
         {
           property: 'isAdmin',
-          message: 'Illegal or missing value for property: isAdmin'
+          errorType: 'Unexpected',
+          message: 'Unexpected value for property "isAdmin"'
         }
       ]);
     });
@@ -137,7 +147,7 @@ describe('validate', function() {
 
     it('should throw an error if the arguments are invalid', function() {
       var validateOrThrow = validate.orThrow.bind(null, pattern, args);
-      expect(validateOrThrow).toThrow('Illegal or missing value for property: title');
+      expect(validateOrThrow).toThrow('Illegal value for property "title"');
     });
 
     it('should return null if the arguments are valid', function() {
