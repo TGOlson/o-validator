@@ -108,6 +108,7 @@ describe('validate', function() {
       expect(errors).toEqual([]);
     });
 
+    // TOOD: break this into seperate tests
     it('should return a list of errors when passed illegal values', function() {
       pattern.title = validate.required(_.isString);
 
@@ -120,17 +121,17 @@ describe('validate', function() {
       expect(errors).toEqual([
         {
           property: 'title',
-          errorType: 'Required',
+          errorCode: 'Required',
           message: 'Required value missing for property "title"'
         },
         {
           property: 'description',
-          errorType: 'Type',
+          errorCode: 'Type',
           message: 'Illegal value for property "description"'
         },
         {
           property: 'isAdmin',
-          errorType: 'Unexpected',
+          errorCode: 'Unexpected',
           message: 'Unexpected value for property "isAdmin"'
         }
       ]);
