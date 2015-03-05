@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash'),
-    curry = _.curry;
-
+var _ = require('lodash');
 
 module.exports = {
 
@@ -14,7 +12,7 @@ module.exports = {
   isNumber : _.isNumber,
 
   // expose additional composed logic
-  hasLengthBetween : curry(function(min, max, v) {
+  hasLengthBetween : _.curry(function(min, max, v) {
     return v.length > min && v.length < max;
   }),
 
