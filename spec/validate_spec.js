@@ -108,11 +108,55 @@ describe('validate', function() {
       expect(errors).toEqual([]);
     });
 
-    // TOOD: break this into seperate tests
-    it('should return a list of errors when passed illegal values', function() {
+    it('should return an error when missing a required property', function() {
       pattern.title = validate.required(_.isString);
-
       args.title = undefined;
+
+      var errors = validate.getErrors(pattern, args);
+
+      expect(errors).toEqual([
+        {
+          property: 'title',
+          errorCode: 'Required',
+          message: 'Required value missing for property "title"'
+        }
+      ]);
+    });
+
+    it('should return an error when a property does not satisfy the predicate', function() {
+      args.description = 123;
+
+      var errors = validate.getErrors(pattern, args);
+
+      expect(errors).toEqual([
+        {
+          property: 'description',
+          errorCode: 'Type',
+          message: 'Illegal value for property "description"'
+        }
+      ]);
+    });
+
+    it('should return an error when a property is unexpected', function() {
+      args.isAdmin = true;
+
+      var errors = validate.getErrors(pattern, args);
+
+      expect(errors).toEqual([
+        {
+          property: 'isAdmin',
+          errorCode: 'Unexpected',
+          message: 'Unexpected value for property "isAdmin"'
+        }
+      ]);
+
+    });
+
+    // TOOD: break this into seperate tests
+    xit('should return a list of errors when passed illegal values', function() {
+      pattern.title = validate.required(_.isString);
+      args.title = undefined;
+
       args.description = 123;
       args.isAdmin = true;
 
