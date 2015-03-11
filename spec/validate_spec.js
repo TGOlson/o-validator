@@ -185,11 +185,11 @@ describe('validate', function() {
       expect(validateOrThrow).toThrow('Illegal value for parameter: title');
     });
 
-    it('should return null if the arguments are valid', function() {
+    it('should return the arguments if the arguments are valid', function() {
       args.title = 'Something cool.';
 
       var validateOrThrow = validate.orThrow(pattern, args);
-      expect(validateOrThrow).toBe(null);
+      expect(validateOrThrow).toBe(args);
     });
   });
 
