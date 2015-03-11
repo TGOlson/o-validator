@@ -5,10 +5,8 @@ Simple argument validator.
 ## Install
 
 ```
-$ npm install validate
+$ npm install simple-validate
 ```
-(note: node module not yet published)
-
 
 Run the specs
 
