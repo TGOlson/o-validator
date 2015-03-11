@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TGOlson/validate.git"
+    "url": "https://github.com/TGOlson/simple-validate.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TGOlson/validate/issues"
+    "url": "https://github.com/TGOlson/simple-validate/issues"
   },
-  "homepage": "https://github.com/TGOlson/validate"
+  "homepage": "https://github.com/TGOlson/simple-validate"
 }
