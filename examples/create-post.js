@@ -10,7 +10,7 @@ var isValidBodyText = validate.isAll(
 );
 
 // save the newly created validator
-var validatePost = validate({
+var validatePost = validate.orThrow({
 
   // required arguments
   title  : validate.required(validate.isAll(p.isString, p.hasLengthBetween(5, 30))),
@@ -33,9 +33,8 @@ var validatePost = validate({
 function createPost(args) {
 
   // invoke the validator against arbitrary provided arguments
-  if(!validatePost(args)) {
-    throw new Error('Invalid post arguments.');
-  }
+  // throw an error if arguments are invalid
+  validatePost(args);
 
   // else create post ...
   console.log('Post arguments are valid! Creating a new post...');
