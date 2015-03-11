@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 
-var validate = require('../lib/validate');
+var validate = require('../lib/simple-validate');
 
 describe('validate', function() {
   var pattern,

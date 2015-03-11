@@ -1,6 +1,6 @@
 'use strict';
 
-var validate = require('../lib/validate'),
+var validate = require('../lib/simple-validate'),
     p        = require('./predicates');
 
 // composing a complex validation predicate and saving it for later

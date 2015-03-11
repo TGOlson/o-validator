@@ -20,7 +20,7 @@ $ jasmine-node spec/
 
 
 ```js
-var validate = require('validate');
+var validate = require('simple-validate');
 
 var pattern = {
   title       : validate.required(isString)

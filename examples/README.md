@@ -15,7 +15,7 @@ Try changing the validator or the data in `data.js` to see how validation result
 Validation example from `create-post.js`:
 
 ```js
-var validate = require('validate'),
+var validate = require('simple-validate'),
     p        = require('./predicates');
 
 // compose a complex validation predicate and saving it for later

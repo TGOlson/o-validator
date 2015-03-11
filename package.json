@@ -1,8 +1,8 @@
 {
-  "name": "validate",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "simple-validate",
+  "version": "0.0.0",
+  "description": "Simple object validator.",
+  "main": "lib/simple-validate.js",
   "dependencies": {
     "lodash": "^3.2.0",
     "ramda": "^0.10.0"
