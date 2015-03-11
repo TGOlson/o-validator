@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+var R = require('ramda');
 
 var validate = require('../lib/simple-validate');
 
@@ -11,9 +11,9 @@ describe('validate', function() {
 
   beforeEach(function() {
     pattern = {
-      title: _.isString,
-      description: _.isString,
-      isActive: _.isBoolean
+      title: R.is(String),
+      description: R.is(String),
+      isActive: R.is(Boolean)
     };
 
     args = {
@@ -43,7 +43,7 @@ describe('validate', function() {
 
   describe('required', function() {
     beforeEach(function() {
-      pattern.title = validate.required(_.isString);
+      pattern.title = validate.required(R.is(String));
     });
 
     it('should return false if a required argument is missing', function() {
@@ -69,6 +69,13 @@ describe('validate', function() {
       result = validate(pattern, args);
       expect(result).toBe(false);
     });
+
+    it('should return false if not all required arguments are present', function() {
+      pattern.description = validate.required(R.is(String));
+
+      result = validate(pattern, args);
+      expect(result).toBe(false);
+    });
   });
 
   describe('isAll', function() {
@@ -77,7 +84,7 @@ describe('validate', function() {
         return v.length > 20;
       }
 
-      var isLongString = validate.isAll(_.isString, isLong);
+      var isLongString = validate.isAll(R.is(String), isLong);
 
       expect(isLongString('A very very long string')).toBe(true);
       expect(isLongString('A short string')).toBe(false);
@@ -86,7 +93,7 @@ describe('validate', function() {
 
   describe('isAny', function() {
     it('should be satisfied if any the supplied predicates are satisfied', function() {
-      var isStringOrNumber = validate.isAny(_.isString, _.isNumber);
+      var isStringOrNumber = validate.isAny(R.is(String), R.is(Number));
 
       expect(isStringOrNumber(10)).toBe(true);
       expect(isStringOrNumber(null)).toBe(false);
@@ -95,7 +102,7 @@ describe('validate', function() {
 
   describe('isNot', function() {
     it('should invert the supplied predicate', function() {
-      var isNotNull = validate.isNot(_.isNull);
+      var isNotNull = validate.isNot(R.eq(null));
 
       expect(isNotNull('Hello')).toBe(true);
       expect(isNotNull(null)).toBe(false);
@@ -103,38 +110,42 @@ describe('validate', function() {
   });
 
   describe('getErrors', function() {
+    var expectedTitleRequiredError = {
+      property: 'title',
+      errorCode: 'Required',
+      message: 'Missing required parameter: title'
+    };
+
+    var expectedDescriptionValueError = {
+      property: 'description',
+      errorCode: 'Value',
+      message: 'Illegal value for parameter: description'
+    };
+
+    var expectedIsAdminUnsupportedError = {
+      property: 'isAdmin',
+      errorCode: 'Unsupported',
+      message: 'Unsupported parameter: isAdmin'
+    };
+
     it('should return an empty list if no values are illegal', function() {
       var errors = validate.getErrors(pattern, args);
       expect(errors).toEqual([]);
     });
 
     it('should return an error when missing a required property', function() {
-      pattern.title = validate.required(_.isString);
+      pattern.title = validate.required(R.is(String));
       args.title = undefined;
 
       var errors = validate.getErrors(pattern, args);
-
-      expect(errors).toEqual([
-        {
-          property: 'title',
-          errorCode: 'Required',
-          message: 'Required value missing for property "title"'
-        }
-      ]);
+      expect(errors).toEqual([expectedTitleRequiredError]);
     });
 
     it('should return an error when a property does not satisfy the predicate', function() {
       args.description = 123;
 
       var errors = validate.getErrors(pattern, args);
-
-      expect(errors).toEqual([
-        {
-          property: 'description',
-          errorCode: 'Type',
-          message: 'Illegal value for property "description"'
-        }
-      ]);
+      expect(errors).toEqual([expectedDescriptionValueError]);
     });
 
     it('should return an error when a property is unexpected', function() {
@@ -142,42 +153,21 @@ describe('validate', function() {
 
       var errors = validate.getErrors(pattern, args);
 
-      expect(errors).toEqual([
-        {
-          property: 'isAdmin',
-          errorCode: 'Unexpected',
-          message: 'Unexpected value for property "isAdmin"'
-        }
-      ]);
-
+      expect(errors).toEqual([expectedIsAdminUnsupportedError]);
     });
 
-    // TOOD: break this into seperate tests
-    xit('should return a list of errors when passed illegal values', function() {
-      pattern.title = validate.required(_.isString);
+    it('should return a list of errors when passed illegal values', function() {
+      pattern.title = validate.required(R.is(String));
       args.title = undefined;
-
       args.description = 123;
       args.isAdmin = true;
 
       var errors = validate.getErrors(pattern, args);
 
       expect(errors).toEqual([
-        {
-          property: 'title',
-          errorCode: 'Required',
-          message: 'Required value missing for property "title"'
-        },
-        {
-          property: 'description',
-          errorCode: 'Type',
-          message: 'Illegal value for property "description"'
-        },
-        {
-          property: 'isAdmin',
-          errorCode: 'Unexpected',
-          message: 'Unexpected value for property "isAdmin"'
-        }
+        expectedTitleRequiredError,
+        expectedDescriptionValueError,
+        expectedIsAdminUnsupportedError
       ]);
     });
   });
@@ -192,7 +182,7 @@ describe('validate', function() {
 
     it('should throw an error if the arguments are invalid', function() {
       var validateOrThrow = validate.orThrow.bind(null, pattern, args);
-      expect(validateOrThrow).toThrow('Illegal value for property "title"');
+      expect(validateOrThrow).toThrow('Illegal value for parameter: title');
     });
 
     it('should return null if the arguments are valid', function() {
