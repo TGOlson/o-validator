@@ -44,6 +44,8 @@ A more advanced example can also be found in the [examples directory](https://gi
 
 ## Available Methods
 
+* TODO: this is outdated - need to add new error handling methods
+
 #### validate
 
 Object -> Object -> Boolean
