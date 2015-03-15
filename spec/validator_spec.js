@@ -2,7 +2,7 @@
 
 var R = require('ramda');
 
-var validate = require('../lib/simple-validate');
+var Validator = require('../lib/validator');
 
 describe('validate', function() {
   var pattern,
@@ -23,57 +23,57 @@ describe('validate', function() {
   });
 
   it('should return true if all provided arguments are valid', function() {
-    result = validate(pattern, args);
+    result = Validator.validate(pattern, args);
     expect(result).toBe(true);
   });
 
   it('should return false if not all provided arguments are valid', function() {
     args.isActive = null;
 
-    result = validate(pattern, args);
+    result = Validator.validate(pattern, args);
     expect(result).toBe(false);
   });
 
   it('should return false if any additional arguments are present', function() {
     args.isAdmin = true;
 
-    result = validate(pattern, args);
+    result = Validator.validate(pattern, args);
     expect(result).toBe(false);
   });
 
   describe('required', function() {
     beforeEach(function() {
-      pattern.title = validate.required(R.is(String));
+      pattern.title = Validator.required(R.is(String));
     });
 
     it('should return false if a required argument is missing', function() {
-      result = validate(pattern, {});
+      result = Validator.validate(pattern, {});
       expect(result).toBe(false);
     });
 
     it('should return true if no arguments are missing or illegal', function() {
-      result = validate(pattern, args);
+      result = Validator.validate(pattern, args);
       expect(result).toBe(true);
     });
 
     it('should false true if no arguments are missing but some are illegal', function() {
       args.title = 123;
 
-      result = validate(pattern, args);
+      result = Validator.validate(pattern, args);
       expect(result).toBe(false);
     });
 
     it('should return false if any additional arguments are present', function() {
       args.isAdmin = true;
 
-      result = validate(pattern, args);
+      result = Validator.validate(pattern, args);
       expect(result).toBe(false);
     });
 
     it('should return false if not all required arguments are present', function() {
-      pattern.description = validate.required(R.is(String));
+      pattern.description = Validator.required(R.is(String));
 
-      result = validate(pattern, args);
+      result = Validator.validate(pattern, args);
       expect(result).toBe(false);
     });
   });
@@ -84,7 +84,7 @@ describe('validate', function() {
         return v.length > 20;
       }
 
-      var isLongString = validate.isAll(R.is(String), isLong);
+      var isLongString = Validator.isAll(R.is(String), isLong);
 
       expect(isLongString('A very very long string')).toBe(true);
       expect(isLongString('A short string')).toBe(false);
@@ -93,7 +93,7 @@ describe('validate', function() {
 
   describe('isAny', function() {
     it('should be satisfied if any the supplied predicates are satisfied', function() {
-      var isStringOrNumber = validate.isAny(R.is(String), R.is(Number));
+      var isStringOrNumber = Validator.isAny(R.is(String), R.is(Number));
 
       expect(isStringOrNumber(10)).toBe(true);
       expect(isStringOrNumber(null)).toBe(false);
@@ -102,7 +102,7 @@ describe('validate', function() {
 
   describe('isNot', function() {
     it('should invert the supplied predicate', function() {
-      var isNotNull = validate.isNot(R.eq(null));
+      var isNotNull = Validator.isNot(R.eq(null));
 
       expect(isNotNull('Hello')).toBe(true);
       expect(isNotNull(null)).toBe(false);
@@ -129,40 +129,40 @@ describe('validate', function() {
     };
 
     it('should return an empty list if no values are illegal', function() {
-      var errors = validate.getErrors(pattern, args);
+      var errors = Validator.getErrors(pattern, args);
       expect(errors).toEqual([]);
     });
 
     it('should return an error when missing a required property', function() {
-      pattern.title = validate.required(R.is(String));
+      pattern.title = Validator.required(R.is(String));
       args.title = undefined;
 
-      var errors = validate.getErrors(pattern, args);
+      var errors = Validator.getErrors(pattern, args);
       expect(errors).toEqual([expectedTitleRequiredError]);
     });
 
     it('should return an error when a property does not satisfy the predicate', function() {
       args.description = 123;
 
-      var errors = validate.getErrors(pattern, args);
+      var errors = Validator.getErrors(pattern, args);
       expect(errors).toEqual([expectedDescriptionValueError]);
     });
 
     it('should return an error when a property is unexpected', function() {
       args.isAdmin = true;
 
-      var errors = validate.getErrors(pattern, args);
+      var errors = Validator.getErrors(pattern, args);
 
       expect(errors).toEqual([expectedIsAdminUnsupportedError]);
     });
 
     it('should return a list of errors when passed illegal values', function() {
-      pattern.title = validate.required(R.is(String));
+      pattern.title = Validator.required(R.is(String));
       args.title = undefined;
       args.description = 123;
       args.isAdmin = true;
 
-      var errors = validate.getErrors(pattern, args);
+      var errors = Validator.getErrors(pattern, args);
 
       expect(errors).toEqual([
         expectedTitleRequiredError,
@@ -176,19 +176,19 @@ describe('validate', function() {
     var validator;
 
     beforeEach(function() {
-      validator = validate(pattern);
+      validator = Validator.validate(pattern);
       args.title = null;
     });
 
     it('should throw an error if the arguments are invalid', function() {
-      var validateOrThrow = validate.orThrow.bind(null, pattern, args);
+      var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
       expect(validateOrThrow).toThrow('Illegal value for parameter: title');
     });
 
     it('should return the arguments if the arguments are valid', function() {
       args.title = 'Something cool.';
 
-      var validateOrThrow = validate.orThrow(pattern, args);
+      var validateOrThrow = Validator.validateOrThrow(pattern, args);
       expect(validateOrThrow).toBe(args);
     });
   });

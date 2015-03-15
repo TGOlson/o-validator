@@ -1,24 +1,25 @@
 {
-  "name": "simple-validate",
+  "name": "o-validator",
   "version": "0.0.1",
-  "description": "Simple object validator.",
-  "main": "lib/simple-validate.js",
+  "description": "Insanely simple and functional object validator.",
+  "main": "lib/o-validator.js",
   "dependencies": {
-    "lodash": "^3.2.0",
     "ramda": "^0.10.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine-node spec"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TGOlson/simple-validate.git"
+    "url": "https://github.com/TGOlson/o-validator.git"
   },
-  "author": "",
+  "author": "Tyler Olson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TGOlson/simple-validate/issues"
+    "url": "https://github.com/TGOlson/o-validator/issues"
   },
-  "homepage": "https://github.com/TGOlson/simple-validate"
+  "homepage": "https://github.com/TGOlson/o-validator"
 }
