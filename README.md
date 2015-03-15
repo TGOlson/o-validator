@@ -2,6 +2,8 @@
 
 Insanely simple and functional object validator.
 
+Validate objects with common predicate functions. No special syntax required.
+
 ## Install
 
 ```
@@ -30,7 +32,7 @@ Validator.validate(pattern, {
   title       : 'Hi There',
   description : 'This is a great post.',
   isActive    : true
-  // tags are undefined - but that is ok, validator treats them as optional
+  // tags are not defined - but that is valid, validator treats them as optional
 });
 // => true
 ```
@@ -43,34 +45,24 @@ A more advanced example can also be found in the [examples directory](https://gi
 
 #### All function are curried
 
-All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is super helpful in general, and in the case of this library it makes it able to create validator functions that can be saved and run at a later time.
+All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is super helpful in general, and in the case of this library it makes it possible to create validator functions that can be saved and run at a later time.
 
-In the case of the previous example, one could write that validation like this:
+For example, one could write the previous validation like this:
 
 ```js
 var Validator = require('o-validator');
 
-var validadeArgs = Validator.vaidate({
-  title       : Validator.required(isString)
-  description : Validator.isAll(isString, hasLengthGreaterThan(5)),
-  isActive    : isBoolean,
-  tags        : isArray
-});
+var validadeArgs = Validator.validate(<pattern>);
 
-validadeArgs({
-  title       : 'Hi There',
-  description : 'This is a great post.',
-  isActive    : true
-  // tags are not defined - but that is valid, validator treats them as optional
-});
-// => true
+validadeArgs(<args>);
+// => Boolean
 ```
+
+See the difference? In this case `validate` was only supplied one argument, the validation pattern, and it then returned a function with that validation pattern saved, which was ready to take the actual data at a later point.
 
 ## Available Methods
 
 As noted previously, all methods in the library are curried. The type signatures are written to reflect that.
-
-Note: functional type signatures are used below to denote the available methods.
 
 #### Validator.validate
 
@@ -113,7 +105,7 @@ Validator.validateOrThrow(<pattern>, <args>) -> <args>
 
 ### Logical Utilities
 
-Note: all logical utilities must be called incrementally (`fn(v1)(v2)`) as shown in the examples below.
+Note: Some logical utilities must be called incrementally - `fn(v1)(v2)` - as shown in the examples below.
 
 #### Validator.required
 
@@ -126,12 +118,13 @@ var validateArgs = Validator.validate({
   description : isString
 });
 
-// when the validator is invoked, a title property must be supplied, while a description property can be optionally supplied
+// when the validator is invoked, a title property must be supplied,
+// while the description property is optional
 ```
 
 #### Validator.isAll
 
-Predicates -> Predicate
+[(a -> Boolean)] -> (a -> Boolean)
 
 Returns a predicate that is satisfied if all supplied predicates are satisfied for the provided value.
 ```js
@@ -141,7 +134,7 @@ Validator.isAll(p1, p2, ...)(<value>) -> Boolean
 
 #### Validator.isAny
 
-Predicates -> Predicate
+[(a -> Boolean)] -> (a -> Boolean)
 
 Returns a predicate that is satisfied if any of the supplied predicates are satisfied for the provided value.
 ```js
@@ -151,7 +144,7 @@ Validator.isAny(p1, p2, ...)(<value>) -> Boolean
 
 #### Validator.isNot
 
-Predicate -> Predicate
+(a -> Boolean) -> (a -> Boolean)
 
 Returns a predicate that inverts the supplied predicate.
 ```js
