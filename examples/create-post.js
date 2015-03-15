@@ -3,7 +3,7 @@
 var Validator = require('../lib/validator'),
     p         = require('./predicates');
 
-// composing a complex validation predicate and saving it for later
+// compose a complex validation predicate and save it for later
 var isValidBodyText = Validator.isAll(
   Validator.isAny(p.isString, p.isMarkdown, p.isMarkup),
   p.hasLengthBetween(20, 100)
@@ -23,7 +23,7 @@ var validatePost = Validator.validateOrThrow({
   category    : p.isString,
   tags        : p.isArray,
 
-  // recursively validating - the validate method is a predicate itself
+  // recursively validate - the validate method is a predicate itself
   // note: this will only work with the Validator.validate predicate
   // using Validator.required on a nested object is not yet supported
   metadata : Validator.validate({

@@ -15,33 +15,35 @@ Try changing the validator or the data in `data.js` to see how validation result
 Validation example from `create-post.js`:
 
 ```js
-var validate = require('simple-validate'),
-    p        = require('./predicates');
+var Validator = require('o-validator'),
+    p         = require('./predicates');
 
-// compose a complex validation predicate and saving it for later
-var isValidBodyText = validate.isAll(
-  validate.isAny(p.isString, p.isMarkdown, p.isMarkup),
+// compose a complex validation predicate and save it for later
+var isValidBodyText = Validator.isAll(
+  Validator.isAny(p.isString, p.isMarkdown, p.isMarkup),
   p.hasLengthBetween(20, 100)
 );
 
 // save the newly created validator
-var validatePost = validate({
+var validatePost = Validator.validateOrThrow({
 
   // required arguments
-  title  : validate.required(validate.isAll(p.isString, p.hasLengthBetween(5, 30))),
-  author : validate.required(p.isString),
-  body   : validate.required(isValidBodyText),
+  title  : Validator.required(Validator.isAll(p.isString, p.hasLengthBetween(5, 30))),
+  author : Validator.required(p.isString),
+  body   : Validator.required(isValidBodyText),
 
   // optional arguments
-  description : validate.isAll(p.isString, p.hasLengthBetween(10, 100)),
-  date        : validate.isAny(p.isDate, p.isDateString),
+  description : Validator.isAll(p.isString, p.hasLengthBetween(10, 100)),
+  date        : Validator.isAny(p.isDate, p.isDateString),
   category    : p.isString,
   tags        : p.isArray,
 
-  // recursively validating - the validate method is a predicate itself
-  metadata : validate({
-      wordCount : validate.required(p.isNumber),
-      related   : validate.isAny(p.isArray, p.isNull)
+  // recursively validate - the validate method is a predicate itself
+  // note: this will only work with the Validator.validate predicate
+  // using Validator.required on a nested object is not yet supported
+  metadata : Validator.validate({
+      wordCount : Validator.required(p.isNumber),
+      related   : Validator.isAny(p.isArray, p.isNull)
     })
 });
 
