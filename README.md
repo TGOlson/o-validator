@@ -95,7 +95,6 @@ Validator.getErrors(<pattern>, <args>) -> [Object]
 
 Throws an error if any predicate returns false, otherwise returns the original input arguments.
 ```js
-
 // Invalid args
 Validator.validateOrThrow(<pattern>, <args>) -> Error
 
