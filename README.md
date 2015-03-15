@@ -41,44 +41,95 @@ Note, this module is best used with a functional library to provide predicates (
 
 A more advanced example can also be found in the [examples directory](https://github.com/TGOlson/o-validator/tree/master/examples).
 
+#### All function are curried
+
+All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is super helpful in general, and in the case of this library it makes it able to create validator functions that can be saved and run at a later time.
+
+In the case of the previous example, one could write that validation like this:
+
+```js
+var Validator = require('o-validator');
+
+var validadeArgs = Validator.vaidate({
+  title       : Validator.required(isString)
+  description : Validator.isAll(isString, hasLengthGreaterThan(5)),
+  isActive    : isBoolean,
+  tags        : isArray
+});
+
+validadeArgs({
+  title       : 'Hi There',
+  description : 'This is a great post.',
+  isActive    : true
+  // tags are not defined - but that is valid, validator treats them as optional
+});
+// => true
+```
+
 ## Available Methods
 
-* TODO: this is outdated - need to add new error handling methods
+As noted previously, all methods in the library are curried. The type signatures are written to reflect that.
 
-#### validate
+Note: functional type signatures are used below to denote the available methods.
 
-Object -> Object -> Boolean
+#### Validator.validate
+
+{k: (a -> Boolean)} -> {k: a} -> Boolean
 
 Validates arguments against the provided pattern.
 ```js
 Validator.validate(<pattern>, <args>) -> Boolean
 ```
 
+#### Validator.getErrors
+
+{k: (a -> Boolean)} -> {k: a} -> [Object]
+
+Returns list of errors for a validation pattern with values. Errors are objects with information about the original call. If no errors are found, the method returns an empty array.
+```js
+Validator.getErrors(<pattern>, <args>) -> [Object]
+
+// Error object is in the form of:
+// {
+//   property  : String,
+//   errorCode : String,
+//   message   : String
+// }
+```
+
+#### Validator.validateOrThrow
+
+{k: (a -> Boolean)} -> {k: a} -> IO a | {k: a}
+
+Throws an error if any predicate returns false, otherwise returns the original input arguments.
+```js
+
+// Invalid args
+Validator.validateOrThrow(<pattern>, <args>) -> Error
+
+// Valid args
+Validator.validateOrThrow(<pattern>, <args>) -> <args>
+```
+
 ### Logical Utilities
 
 Note: all logical utilities must be called incrementally (`fn(v1)(v2)`) as shown in the examples below.
 
-#### required
+#### Validator.required
 
-Predicate -> Predicate
+(a -> Boolean) -> {k: (a -> Boolean), required: true}
 
-Returns a predicate that is satisfied if the supplied predicate is satisfied and the provided value is not undefined. This should be used to denote that a property is required, since otherwise properties as assumed to be optional.
+Returns an object that specifies the predicate and that the value is required. This should be used to denote that a property is required, since otherwise properties as assumed to be optional.
 ```js
-Validator.required(p) -> Function
-Validator.required(p)(<value>) -> Boolean
+var validateArgs = Validator.validate({
+  title       : Validator.required(isString)
+  description : isString
+});
+
+// when the validator is invoked, a title property must be supplied, while a description property can be optionally supplied
 ```
 
-#### optional
-
-Predicate -> Predicate
-
-Returns a predicate that is satisfied if the supplied predicate is satisfied or the provided value is undefined. Note: using this utility is probably not necessary to use often, since `validate` assumes all properties are optional by default. This is the shorthand equivalent to `isAny(isUndefined, p)`.
-```js
-Validator.optional(p) -> Function
-Validator.optional(p)(<value>) -> Boolean
-```
-
-#### isAll
+#### Validator.isAll
 
 Predicates -> Predicate
 
@@ -88,7 +139,7 @@ Validator.isAll(p1, p2, ...) -> Function
 Validator.isAll(p1, p2, ...)(<value>) -> Boolean
 ```
 
-#### isAny
+#### Validator.isAny
 
 Predicates -> Predicate
 
@@ -98,7 +149,7 @@ Validator.isAny(p1, p2, ...) -> Function
 Validator.isAny(p1, p2, ...)(<value>) -> Boolean
 ```
 
-#### isNot
+#### Validator.isNot
 
 Predicate -> Predicate
 
@@ -110,7 +161,6 @@ Validator.isNot(p)(<value>) -> Boolean
 
 ## TODO
 
-* Document new error handling methods.
 * Add ability to insert custom error messages, and/or create custom error messages for custom predicates.
 
 ## Contributing
