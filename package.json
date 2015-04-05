@@ -4,14 +4,15 @@
   "description": "Simple and functional object validator.",
   "main": "lib/o-validator.js",
   "dependencies": {
-    "coveralls": "^2.11.2",
     "ramda": "^0.13.0"
   },
   "devDependencies": {
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.13",
     "jasmine-node": "^1.14.5"
   },
   "scripts": {
-    "test": "jasmine-node spec"
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/jasmine-node ."
   },
   "repository": {
     "type": "git",
