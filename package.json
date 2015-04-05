@@ -4,7 +4,7 @@
   "description": "Insanely simple and functional object validator.",
   "main": "lib/o-validator.js",
   "dependencies": {
-    "ramda": "^0.10.0"
+    "ramda": "^0.13.0"
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5"
