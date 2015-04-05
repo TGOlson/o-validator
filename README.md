@@ -171,4 +171,4 @@ Validator.isNot(p)(<value>) -> Boolean
 [travis-url]: https://travis-ci.org/TGOlson/o-validator
 
 [coveralls-image]: https://coveralls.io/repos/TGOlson/o-validator/badge.svg?branch=master)
-[coveralls-url]: (https://coveralls.io/r/TGOlson/o-validator?branch=master)
+[coveralls-url]: https://coveralls.io/r/TGOlson/o-validator?branch=master
