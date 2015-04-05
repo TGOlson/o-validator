@@ -1,6 +1,6 @@
 # o-validator
 
-Insanely simple and functional object validator.
+Simple and functional object validator.
 
 Validate objects with common predicate functions. No special syntax required.
 
@@ -64,9 +64,11 @@ See the difference? In this case `validate` was only supplied one argument, the 
 
 As noted previously, all methods in the library are curried. The type signatures are written to reflect that.
 
+Note: the type `Predicate` is defined as a function that takes any value and returns a boolean (`(a -> Boolean)`).
+
 #### Validator.validate
 
-{k: (a -> Boolean)} -> {k: a} -> Boolean
+{k: Predicate} -> {k: a} -> Boolean
 
 Validates arguments against the provided pattern.
 ```js
@@ -75,9 +77,9 @@ Validator.validate(<pattern>, <args>) -> Boolean
 
 #### Validator.getErrors
 
-{k: (a -> Boolean)} -> {k: a} -> [Object]
+{k: Predicate} -> {k: a} -> [Object]
 
-Returns list of errors for a validation pattern with values. Errors are objects with information about the original call. If no errors are found, the method returns an empty array.
+Returns a list of errors for a validation pattern with values. Errors are objects with information about the original call. If no errors are found, the method returns an empty array.
 ```js
 Validator.getErrors(<pattern>, <args>) -> [Object]
 
@@ -91,7 +93,7 @@ Validator.getErrors(<pattern>, <args>) -> [Object]
 
 #### Validator.validateOrThrow
 
-{k: (a -> Boolean)} -> {k: a} -> IO a | {k: a}
+{k: Predicate} -> {k: a} -> Error or {k: a}
 
 Throws an error if any predicate returns false, otherwise returns the original input arguments.
 ```js
@@ -108,7 +110,7 @@ Note: Some logical utilities must be called incrementally - `fn(v1)(v2)` - as sh
 
 #### Validator.required
 
-(a -> Boolean) -> {k: (a -> Boolean), required: true}
+Predicate -> {k: Predicate, required: true}
 
 Returns an object that specifies the predicate and that the value is required. This should be used to denote that a property is required, since otherwise properties as assumed to be optional.
 ```js
@@ -123,7 +125,7 @@ var validateArgs = Validator.validate({
 
 #### Validator.isAll
 
-[(a -> Boolean)] -> (a -> Boolean)
+[Predicate] -> Predicate
 
 Returns a predicate that is satisfied if all supplied predicates are satisfied for the provided value.
 ```js
@@ -133,7 +135,7 @@ Validator.isAll(p1, p2, ...)(<value>) -> Boolean
 
 #### Validator.isAny
 
-[(a -> Boolean)] -> (a -> Boolean)
+[Predicate] -> Predicate
 
 Returns a predicate that is satisfied if any of the supplied predicates are satisfied for the provided value.
 ```js
@@ -143,7 +145,7 @@ Validator.isAny(p1, p2, ...)(<value>) -> Boolean
 
 #### Validator.isNot
 
-(a -> Boolean) -> (a -> Boolean)
+Predicate -> Predicate
 
 Returns a predicate that inverts the supplied predicate.
 ```js
