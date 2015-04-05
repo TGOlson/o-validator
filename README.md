@@ -1,6 +1,6 @@
 # o-validator
 
-[![Build Status](https://travis-ci.org/TGOlson/o-validator.svg?branch=master)](https://travis-ci.org/TGOlson/o-validator)
+[![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
 Simple and functional object validator.
 
@@ -166,3 +166,9 @@ Validator.isNot(p)(<value>) -> Boolean
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+[travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
+[travis-url]: https://travis-ci.org/TGOlson/o-validator
+
+[coveralls-image]: https://coveralls.io/repos/TGOlson/o-validator/badge.svg?branch=master)
+[coveralls-url]: (https://coveralls.io/r/TGOlson/o-validator?branch=master)
