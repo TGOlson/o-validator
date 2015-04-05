@@ -1,5 +1,7 @@
 # o-validator
 
+[![Build Status](https://travis-ci.org/TGOlson/o-validator.svg?branch=master)](https://travis-ci.org/TGOlson/o-validator)
+
 Simple and functional object validator.
 
 Validate objects with common predicate functions. No special syntax required.
