@@ -1,7 +1,7 @@
 {
   "name": "o-validator",
   "version": "0.0.2",
-  "description": "Insanely simple and functional object validator.",
+  "description": "Simple and functional object validator.",
   "main": "lib/o-validator.js",
   "dependencies": {
     "ramda": "^0.13.0"
@@ -16,6 +16,12 @@
     "type": "git",
     "url": "https://github.com/TGOlson/o-validator.git"
   },
+  "keywords": [
+    "validator",
+    "validation",
+    "predicates",
+    "objects"
+  ],
   "author": "Tyler Olson",
   "license": "ISC",
   "bugs": {
