@@ -21,13 +21,15 @@ $ npm test
 ## Usage
 
 ```js
-var Validator = require('o-validator');
+
+var Validator = require('o-validator'),
+    R         = require('ramda');
 
 var pattern = {
-  title       : Validator.required(isString)
-  description : Validator.isAll(isString, hasLengthGreaterThan(5)),
-  isActive    : isBoolean,
-  tags        : isArray
+  title       : Validator.required(R.is(String))
+  description : R.allPass([R.is(String), hasLengthGreaterThan(5)]),
+  isActive    : R.is(Boolean),
+  tags        : R.is(Array)
 };
 
 Validator.validate(pattern, {
@@ -41,7 +43,7 @@ Validator.validate(pattern, {
 
 The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are assumed to be optional unless declared otherwise using `Validator.required`.
 
-Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as ramda or lodash.
+Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as [ramda](https://github.com/ramda/ramda).
 
 
 #### All function are curried
@@ -109,7 +111,7 @@ Validator.validateOrThrow(<pattern>, <args>) -> <args>
 
 #### Validator.required
 
-Predicate -> {k: Predicate, required: true}
+Predicate -> {predicate: Predicate, required: true}
 
 Returns an object that specifies the predicate and that the value is required. This should be used to denote that a property is required, since otherwise properties as assumed to be optional.
 ```js
