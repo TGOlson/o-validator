@@ -9,7 +9,7 @@ Validate objects with common predicate functions. No special syntax required.
 ## Install
 
 ```
-$ npm install o-validator
+$ npm install o-validator --save
 ```
 
 Run the specs
@@ -41,9 +41,8 @@ Validator.validate(pattern, {
 
 The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are assumed to be optional unless declared otherwise using `Validator.required`.
 
-Note, this module is best used with a functional library to provide predicates (`isString`, `isNull`, etc.), such as `ramda` or `lodash`.
+Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as ramda or lodash.
 
-A more advanced example can also be found in the [examples directory](https://github.com/TGOlson/o-validator/tree/master/examples).
 
 #### All function are curried
 
@@ -60,13 +59,12 @@ validadeArgs(<args>);
 // => Boolean
 ```
 
-See the difference? In this case `validate` was only supplied one argument, the validation pattern, and it then returned a function with that validation pattern saved, which was ready to take the actual data at a later point.
-
 ## Available Methods
 
 As noted previously, all methods in the library are curried. The type signatures are written to reflect that.
 
 Note: the type `Predicate` is defined as a function that takes any value and returns a boolean (`(a -> Boolean)`).
+
 
 #### Validator.validate
 
@@ -76,6 +74,7 @@ Validates arguments against the provided pattern.
 ```js
 Validator.validate(<pattern>, <args>) -> Boolean
 ```
+
 
 #### Validator.getErrors
 
@@ -93,6 +92,7 @@ Validator.getErrors(<pattern>, <args>) -> [Object]
 // }
 ```
 
+
 #### Validator.validateOrThrow
 
 {k: Predicate} -> {k: a} -> Error or {k: a}
@@ -106,9 +106,6 @@ Validator.validateOrThrow(<pattern>, <args>) -> Error
 Validator.validateOrThrow(<pattern>, <args>) -> <args>
 ```
 
-### Logical Utilities
-
-Note: Some logical utilities must be called incrementally - `fn(v1)(v2)` - as shown in the examples below.
 
 #### Validator.required
 
@@ -125,47 +122,10 @@ var validateArgs = Validator.validate({
 // while the description property is optional
 ```
 
-#### Validator.isAll
-
-[Predicate] -> Predicate
-
-Returns a predicate that is satisfied if all supplied predicates are satisfied for the provided value.
-```js
-Validator.isAll(p1, p2, ...) -> Function
-Validator.isAll(p1, p2, ...)(<value>) -> Boolean
-```
-
-#### Validator.isAny
-
-[Predicate] -> Predicate
-
-Returns a predicate that is satisfied if any of the supplied predicates are satisfied for the provided value.
-```js
-Validator.isAny(p1, p2, ...) -> Function
-Validator.isAny(p1, p2, ...)(<value>) -> Boolean
-```
-
-#### Validator.isNot
-
-Predicate -> Predicate
-
-Returns a predicate that inverts the supplied predicate.
-```js
-Validator.isNot(p) -> Function
-Validator.isNot(p)(<value>) -> Boolean
-```
 
 ## TODO
 
 * Add ability to insert custom error messages, and/or create custom error messages for custom predicates.
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
 
 [travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
 [travis-url]: https://travis-ci.org/TGOlson/o-validator

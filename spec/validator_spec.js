@@ -78,37 +78,6 @@ describe('validate', function() {
     });
   });
 
-  describe('isAll', function() {
-    it('should be satisfied if all the supplied predicates are satisfied', function() {
-      function isLong(v) {
-        return v.length > 20;
-      }
-
-      var isLongString = Validator.isAll(R.is(String), isLong);
-
-      expect(isLongString('A very very long string')).toBe(true);
-      expect(isLongString('A short string')).toBe(false);
-    });
-  });
-
-  describe('isAny', function() {
-    it('should be satisfied if any the supplied predicates are satisfied', function() {
-      var isStringOrNumber = Validator.isAny(R.is(String), R.is(Number));
-
-      expect(isStringOrNumber(10)).toBe(true);
-      expect(isStringOrNumber(null)).toBe(false);
-    });
-  });
-
-  describe('isNot', function() {
-    it('should invert the supplied predicate', function() {
-      var isNotNull = Validator.isNot(R.eq(null));
-
-      expect(isNotNull('Hello')).toBe(true);
-      expect(isNotNull(null)).toBe(false);
-    });
-  });
-
   describe('getErrors', function() {
     var expectedTitleRequiredError = {
       property: 'title',

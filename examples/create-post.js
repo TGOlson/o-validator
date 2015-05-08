@@ -5,7 +5,7 @@ var Validator = require('../lib/validator'),
 
 // compose a complex validation predicate and save it for later
 var isValidBodyText = Validator.isAll(
-  Validator.isAny(p.isString, p.isMarkdown, p.isMarkup),
+  R.anyPass([p.isString, p.isMarkdown, p.isMarkup]),
   p.hasLengthBetween(20, 100)
 );
 
@@ -19,7 +19,7 @@ var validatePost = Validator.validateOrThrow({
 
   // optional arguments
   description : Validator.isAll(p.isString, p.hasLengthBetween(10, 100)),
-  date        : Validator.isAny(p.isDate, p.isDateString),
+  R.anyPass([p.isDate, p.isDateString]),
   category    : p.isString,
   tags        : p.isArray,
 
@@ -28,7 +28,7 @@ var validatePost = Validator.validateOrThrow({
   // using Validator.required on a nested object is not yet supported
   metadata : Validator.validate({
       wordCount : Validator.required(p.isNumber),
-      related   : Validator.isAny(p.isArray, p.isNull)
+      R.anyPass([p.isArray, p.isNull])
     })
 });
 
