@@ -2,8 +2,6 @@
 
 [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
-[![Coverage Status](https://coveralls.io/repos/MindjetLLC/o-validator/badge.svg?branch=master)](https://coveralls.io/r/MindjetLLC/o-validator?branch=master)
-
 Simple and functional object validator.
 
 Validate objects with common predicate functions. No special syntax required.
