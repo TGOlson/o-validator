@@ -56,7 +56,7 @@ describe('validate', function() {
       expect(result).toBe(true);
     });
 
-    it('should false true if no arguments are missing but some are illegal', function() {
+    it('should return false if no arguments are missing but some are illegal', function() {
       args.title = 123;
 
       result = Validator.validate(pattern, args);
