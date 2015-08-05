@@ -1,6 +1,6 @@
 {
   "name": "o-validator",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Simple and functional object validator.",
   "main": "lib/validator.js",
   "dependencies": {
