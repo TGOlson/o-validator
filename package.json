@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MindjetLLC/o-validator.git"
+    "url": "https://github.com/TGOlson/o-validator.git"
   },
   "keywords": [
     "validator",
@@ -27,7 +27,7 @@
   "author": "Tyler Olson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MindjetLLC/o-validator/issues"
+    "url": "https://github.com/TGOlson/o-validator/issues"
   },
-  "homepage": "https://github.com/MindjetLLC/o-validator"
+  "homepage": "https://github.com/TGOlson/o-validator"
 }

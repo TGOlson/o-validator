@@ -129,8 +129,8 @@ var validateArgs = Validator.validate({
 
 * Add ability to insert custom error messages, and/or create custom error messages for custom predicates.
 
-[travis-image]: https://travis-ci.org/MindjetLLC/o-validator.svg?branch=master
-[travis-url]: https://travis-ci.org/MindjetLLC/o-validator
+[travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
+[travis-url]: https://travis-ci.org/TGOlson/o-validator
 
-[coveralls-image]: https://coveralls.io/repos/MindjetLLC/o-validator/badge.svg?branch=master
-[coveralls-url]: https://coveralls.io/r/MindjetLLC/o-validator?branch=master
+[coveralls-image]: https://coveralls.io/repos/TGOlson/o-validator/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/r/TGOlson/o-validator?branch=master
