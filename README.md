@@ -99,13 +99,27 @@ Validator.getErrors(<pattern>, <args>) -> [Object]
 
 {k: Predicate} -> {k: a} -> Error or {k: a}
 
-Throws an error if any predicate returns false, otherwise returns the original input arguments.
+Throws the first error found if any predicate returns false, otherwise returns the original input arguments.
 ```js
 // Invalid args
 Validator.validateOrThrow(<pattern>, <args>) -> Error
 
 // Valid args
 Validator.validateOrThrow(<pattern>, <args>) -> <args>
+```
+
+
+#### Validator.validateOrThrowAll
+
+{k: Predicate} -> {k: a} -> Error or {k: a}
+
+Throws a list of errors if any predicate returns false, otherwise returns the original input arguments.
+```js
+// Invalid args
+Validator.validateOrThrowAll(<pattern>, <args>) -> Error
+
+// Valid args
+Validator.validateOrThrowAll(<pattern>, <args>) -> <args>
 ```
 
 
@@ -125,9 +139,27 @@ var validateArgs = Validator.validate({
 ```
 
 
-## TODO
+#### Validator.custom
 
-* Add ability to insert custom error messages, and/or create custom error messages for custom predicates.
+{predicate: p, ...k: v} -> Error | {predicate: p, ...k: v}
+
+Creates an object that specifies the custom validation rules.
+Note: a predicate must be supplied
+```js
+var validateArgs = Validator.validate({
+  title       : Validator.custom({
+    predicate : isString,
+    message   : 'Not a valid title, dude!',
+    required  : true
+  }),
+  description : isString
+});
+
+// when the validator is invoked, a title property must be supplied,
+// if it is not supplied or does not satisfy the predicate, the custom error message will be throw
+// while the description property is optional
+```
+
 
 [travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
 [travis-url]: https://travis-ci.org/TGOlson/o-validator
