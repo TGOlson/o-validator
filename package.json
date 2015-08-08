@@ -1,8 +1,8 @@
 {
   "name": "o-validator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Simple and functional object validator.",
-  "main": "lib/validator.js",
+  "main": "index.js",
   "dependencies": {
     "ramda": "0.17.1"
   },
