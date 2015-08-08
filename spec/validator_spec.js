@@ -4,7 +4,7 @@ var R = require('ramda');
 
 var Validator = require('../lib/validator');
 
-describe('validate', function() {
+describe('Validator', function() {
   var pattern,
       args,
       result;
@@ -22,23 +22,38 @@ describe('validate', function() {
     };
   });
 
-  it('should return true if all provided arguments are valid', function() {
-    result = Validator.validate(pattern, args);
-    expect(result).toBe(true);
-  });
+  describe('validate', function() {
+    it('should return true if all provided arguments are valid', function() {
+      result = Validator.validate(pattern, args);
+      expect(result).toBe(true);
+    });
 
-  it('should return false if not all provided arguments are valid', function() {
-    args.isActive = null;
+    it('should return false if not all provided arguments are valid', function() {
+      args.isActive = null;
 
-    result = Validator.validate(pattern, args);
-    expect(result).toBe(false);
-  });
+      result = Validator.validate(pattern, args);
+      expect(result).toBe(false);
+    });
 
-  it('should return false if any additional arguments are present', function() {
-    args.isAdmin = true;
+    it('should return false if any additional arguments are present', function() {
+      args.isAdmin = true;
 
-    result = Validator.validate(pattern, args);
-    expect(result).toBe(false);
+      result = Validator.validate(pattern, args);
+      expect(result).toBe(false);
+    });
+
+    it('should recursively validate', function() {
+      pattern.nested = Validator.validate({
+        foo: R.is(String)
+      });
+
+      args.nested = {
+        foo: 'bar'
+      };
+
+      result = Validator.validate(pattern, args);
+      expect(result).toBe(true);
+    });
   });
 
   describe('required', function() {
@@ -75,6 +90,17 @@ describe('validate', function() {
 
       result = Validator.validate(pattern, args);
       expect(result).toBe(false);
+    });
+
+    it('should recursively validate', function() {
+      pattern.nested = Validator.required(Validator.validate({
+        foo: Validator.required(R.is(String))
+      }));
+
+      args.nested = {foo: 'bar'};
+
+      result = Validator.validate(pattern, args);
+      expect(result).toBe(true);
     });
   });
 
