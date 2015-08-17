@@ -104,7 +104,7 @@ describe('Validator', function() {
     });
   });
 
-  ddescribe('getErrors', function() {
+  describe('getErrors', function() {
     var expectedTitleRequiredError = {
       property: 'title',
       errorCode: 'Required',
@@ -168,22 +168,14 @@ describe('Validator', function() {
   });
 
   describe('validateOrThrow', function() {
-    it('should throw an error if the arguments are invalid', function() {
+    it('should throw an error if one of the arguments are invalid', function() {
       args.title = null;
-      args.description = null;
 
       var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
       expect(validateOrThrow).toThrow('Illegal value for parameter: title');
     });
 
-    it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrow = Validator.validateOrThrow(pattern, args);
-      expect(validateOrThrow).toBe(args);
-    });
-  // });
-
-  // describe('validateOrThrow', function() {
-    it('should throw an error if the arguments are invalid', function() {
+    it('should throw an error if multiple the arguments are invalid', function() {
       args.title = null;
       args.description = null;
 
@@ -192,8 +184,7 @@ describe('Validator', function() {
     });
 
     it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrow = Validator.validateOrThrow(pattern, args);
-      expect(validateOrThrow).toBe(args);
+      expect(Validator.validateOrThrow(pattern, args)).toBe(args);
     });
   });
 });
