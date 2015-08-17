@@ -104,7 +104,7 @@ describe('Validator', function() {
     });
   });
 
-  describe('getErrors', function() {
+  ddescribe('getErrors', function() {
     var expectedTitleRequiredError = {
       property: 'title',
       errorCode: 'Required',

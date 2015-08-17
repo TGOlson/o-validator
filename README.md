@@ -46,7 +46,7 @@ The validator runs each argument against the defined validation pattern, asserti
 Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as [ramda](https://github.com/ramda/ramda).
 
 
-#### All function are curried
+#### Functions are curried by default
 
 All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is super helpful in general, and in the case of this library it makes it possible to create validator functions that can be saved and run at a later time.
 
@@ -55,7 +55,7 @@ For example, one could write the previous validation like this:
 ```js
 var Validator = require('o-validator');
 
-var validadeArgs = Validator.validate(<pattern>);
+var validateArgs = Validator.validate(<pattern>);
 
 validadeArgs(<args>);
 // => Boolean
