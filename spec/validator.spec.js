@@ -108,19 +108,19 @@ describe('Validator', function() {
     var expectedTitleRequiredError = {
       property: 'title',
       errorCode: 'Required',
-      message: 'Missing required parameter: title'
+      message: 'Missing required parameter "title"'
     };
 
     var expectedDescriptionValueError = {
       property: 'description',
       errorCode: 'Value',
-      message: 'Illegal value for parameter: description'
+      message: 'Illegal value for parameter "description"'
     };
 
     var expectedIsAdminUnsupportedError = {
       property: 'isAdmin',
       errorCode: 'Unsupported',
-      message: 'Unsupported parameter: isAdmin'
+      message: 'Unsupported parameter "isAdmin"'
     };
 
     it('should return an empty list if no values are illegal', function() {
@@ -172,7 +172,7 @@ describe('Validator', function() {
       args.title = null;
 
       var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
-      expect(validateOrThrow).toThrow('Illegal value for parameter: title');
+      expect(validateOrThrow).toThrow('Validation Error: Illegal value for parameter "title"');
     });
 
     it('should throw an error if multiple the arguments are invalid', function() {
@@ -180,7 +180,7 @@ describe('Validator', function() {
       args.description = null;
 
       var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
-      expect(validateOrThrow).toThrow('Illegal value for parameter: title; Illegal value for parameter: description');
+      expect(validateOrThrow).toThrow('Validation Error: Illegal value for parameter "title", Illegal value for parameter "description"');
     });
 
     it('should return the arguments if the arguments are valid', function() {
