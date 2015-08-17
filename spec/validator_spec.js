@@ -180,50 +180,20 @@ describe('Validator', function() {
       var validateOrThrow = Validator.validateOrThrow(pattern, args);
       expect(validateOrThrow).toBe(args);
     });
-  });
+  // });
 
-  describe('validateOrThrowAll', function() {
+  // describe('validateOrThrow', function() {
     it('should throw an error if the arguments are invalid', function() {
       args.title = null;
       args.description = null;
 
-      var validateOrThrowAll = Validator.validateOrThrowAll.bind(null, pattern, args);
-      expect(validateOrThrowAll).toThrow('Illegal value for parameter: title; Illegal value for parameter: description');
+      var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
+      expect(validateOrThrow).toThrow('Illegal value for parameter: title; Illegal value for parameter: description');
     });
 
     it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrowAll = Validator.validateOrThrowAll(pattern, args);
-      expect(validateOrThrowAll).toBe(args);
-    });
-  });
-
-  describe('custom', function() {
-    var message;
-
-    beforeEach(function() {
-      message = 'That ain\'t the right title bruh.';
-      pattern.title = Validator.custom({
-        message   : message,
-        predicate : R.is(String),
-        required  : true
-      });
-    });
-
-    it('should throw a custom error if the arguments are invalid', function() {
-      args.title = null;
-
-      var validateOrThrowCustom = Validator.validateOrThrow.bind(null, pattern, args);
-      expect(validateOrThrowCustom).toThrow(message);
-    });
-
-    it('should throw a validation error if the custom arguments are invalid', function() {
-      var validateCustom = Validator.custom.bind(null, {});
-      expect(validateCustom).toThrow('Missing required parameter: predicate');
-    });
-
-    it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrowCustom = Validator.validateOrThrow(pattern, args);
-      expect(validateOrThrowCustom).toBe(args);
+      var validateOrThrow = Validator.validateOrThrow(pattern, args);
+      expect(validateOrThrow).toBe(args);
     });
   });
 });
