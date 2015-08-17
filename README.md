@@ -2,9 +2,9 @@
 
 [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
-Simple and functional object validator.
+Fast, lightweight and flexible object validation library.
 
-Validate objects with common predicate functions. No special syntax required.
+Build validators from a generic low-level API, or use helpful pre-built validators. Validate individual properties on objects with common predicate functions. No special syntax required.
 
 ## Install
 
