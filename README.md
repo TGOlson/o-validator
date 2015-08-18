@@ -2,9 +2,9 @@
 
 [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
-Fast, lightweight and flexible object validation library.
+Flexible and lightweight object validation library.
 
-Build validators from a generic low-level API, or use helpful pre-built validators. Validate individual properties on objects with common predicate functions. No special syntax required.
+Build validators from a generic low-level API, or use helpful pre-built validators. This library makes no assumptions about the structure of the provided data, and instead lets the consumer define how their data should be inspected by validating properties with common predicate functions. No special syntax required.
 
 ## Install
 
@@ -22,17 +22,17 @@ $ npm test
 
 ```js
 
-var Validator = require('o-validator'),
-    R         = require('ramda');
+var V = require('o-validator');
+var R = require('ramda');
 
-var pattern = {
-  title       : Validator.required(R.is(String))
-  description : R.allPass([R.is(String), hasLengthGreaterThan(5)]),
+var schema = {
+  title       : V.required(R.is(String))
+  description : R.allPass([R.is(String), R.propSatisfies(R.gt(5), 'length')]),
   isActive    : R.is(Boolean),
   tags        : R.is(Array)
 };
 
-Validator.validate(pattern, {
+V.validate(schema, {
   title       : 'Hi There',
   description : 'This is a great post.',
   isActive    : true
@@ -41,29 +41,30 @@ Validator.validate(pattern, {
 // => true
 ```
 
-The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are assumed to be optional unless declared otherwise using `Validator.required`.
+The validator runs each argument against the defined validation schema, asserting a true outcome for each. Properties defined in the validation schema are assumed to be optional unless declared otherwise using `Validator.required`.
 
 Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as [ramda](https://github.com/ramda/ramda).
 
 
 #### Functions are curried by default
 
-All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is super helpful in general, and in the case of this library it makes it possible to create validator functions that can be saved and run at a later time.
+All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is very helpful in general, and in the case of this library it makes it possible to create validator functions that can be saved and run at a later time.
 
 For example, one could write the previous validation like this:
 
 ```js
-var Validator = require('o-validator');
+var V = require('o-validator');
 
-var validateArgs = Validator.validate(<pattern>);
+// construct validation function and save it for later
+var validateArgs = V.validate(<schema>);
 
-validadeArgs(<args>);
-// => Boolean
+// use (and re-use) previously constructed validation function
+validadeArgs(<args>); // => Boolean
 ```
 
 ## Available Methods
 
-As noted previously, all methods in the library are curried. The type signatures are written to reflect that.
+As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that.
 
 Note: the type `Predicate` is defined as a function that takes any value and returns a boolean (`(a -> Boolean)`).
 
@@ -72,9 +73,12 @@ Note: the type `Predicate` is defined as a function that takes any value and ret
 
 {k: Predicate} -> {k: a} -> Boolean
 
-Validates arguments against the provided pattern.
+Validates arguments against the provided schema, returning a boolean value to indicate if the arguments satisfied the defined schema.
+
+Note: when partially applied with a schema, this function produces a `Predicate`. As such, it can be used to recursively validate objects with nested properties.
+
 ```js
-Validator.validate(<pattern>, <args>) -> Boolean
+Validator.validate(<schema>, <args>) -> Boolean
 ```
 
 
@@ -82,9 +86,9 @@ Validator.validate(<pattern>, <args>) -> Boolean
 
 {k: Predicate} -> {k: a} -> [Object]
 
-Returns a list of errors for a validation pattern with values. Errors are objects with information about the original call. If no errors are found, the method returns an empty array.
+Returns a list of errors for a validation schema with values. Errors are objects with information about the original call. If no errors are found, the method returns an empty array.
 ```js
-Validator.getErrors(<pattern>, <args>) -> [Object]
+Validator.getErrors(<schema>, <args>) -> [Object]
 
 // Error object is in the form of:
 // {
@@ -99,27 +103,13 @@ Validator.getErrors(<pattern>, <args>) -> [Object]
 
 {k: Predicate} -> {k: a} -> Error or {k: a}
 
-Throws the first error found if any predicate returns false, otherwise returns the original input arguments.
+Throws an error containing information about any invalid inputs, if found, otherwise returns the original input arguments.
 ```js
 // Invalid args
-Validator.validateOrThrow(<pattern>, <args>) -> Error
+Validator.validateOrThrow(<schema>, <args>) -> Error
 
 // Valid args
-Validator.validateOrThrow(<pattern>, <args>) -> <args>
-```
-
-
-#### Validator.validateOrThrowAll
-
-{k: Predicate} -> {k: a} -> Error or {k: a}
-
-Throws a list of errors if any predicate returns false, otherwise returns the original input arguments.
-```js
-// Invalid args
-Validator.validateOrThrowAll(<pattern>, <args>) -> Error
-
-// Valid args
-Validator.validateOrThrowAll(<pattern>, <args>) -> <args>
+Validator.validateOrThrow(<schema>, <args>) -> <args>
 ```
 
 
@@ -139,27 +129,47 @@ var validateArgs = Validator.validate({
 ```
 
 
-#### Validator.custom
+## In depth example
 
-{predicate: p, ...k: v} -> Error | {predicate: p, ...k: v}
+As noted above, this library aims to provide a generic low-level API so that almost any use case can be accommodated. For example, we could easily build a validation function that returns errors using the default error message library, but also includes information about the original top level object in its error response.
 
-Creates an object that specifies the custom validation rules.
-Note: a predicate must be supplied
 ```js
-var validateArgs = Validator.validate({
-  title       : Validator.custom({
-    predicate : isString,
-    message   : 'Not a valid title, dude!',
-    required  : true
-  }),
-  description : isString
+// custom-validator.js
+var V = require('o-validator');
+var R = require('ramda');
+
+var getDefaultErrorMessages = R.compose(R.pluck('message'), V.addDefaultErrorMessages);
+
+var customErrorHandler = R.curry(function(identifier, errors) {
+  var errorMessages = getDefaultErrorMessages(errors);
+
+  var message = 'Could not validate ' + identifier + ' - ' + R.join('; ', errorMessages);
+  throw new Error(message);
 });
 
-// when the validator is invoked, a title property must be supplied,
-// if it is not supplied or does not satisfy the predicate, the custom error message will be throw
-// while the description property is optional
+var validateWithIdentifier = R.curry(function(identifier, schema, props) {
+  return V.validateWithErrorHandler(customErrorHandler(identifier), schema, props);
+});
+
+module.exports = validateWithIdentifier;
 ```
 
+By simply glueing together a few functions, we now have a customized validation function ready to be re-used in our project.
+
+```js
+// user-profile.js
+var R = require('ramda');
+
+var validateWithIdentifier = require('./custom-validator');
+
+var validateUserProfile = validateWithIdentifier('userProfile', {
+  name : R.is(String),
+  age  : R.is(Number)
+});
+
+validateUserProfile({name: 'Tyler', age: 'seventy-million'});
+// => Error: Could not validate userProfile - Illegal value for parameter "age"
+```
 
 [travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
 [travis-url]: https://travis-ci.org/TGOlson/o-validator

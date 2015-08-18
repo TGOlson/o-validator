@@ -43,13 +43,8 @@ describe('Validator', function() {
     });
 
     it('should recursively validate', function() {
-      pattern.nested = Validator.validate({
-        foo: R.is(String)
-      });
-
-      args.nested = {
-        foo: 'bar'
-      };
+      pattern.nested = Validator.validate({foo: R.is(String)});
+      args.nested = {foo: 'bar'};
 
       result = Validator.validate(pattern, args);
       expect(result).toBe(true);
@@ -106,21 +101,21 @@ describe('Validator', function() {
 
   describe('getErrors', function() {
     var expectedTitleRequiredError = {
-      property: 'title',
-      errorCode: 'Required',
-      message: 'Missing required parameter "title"'
+      property  : 'title',
+      errorCode : 'Required',
+      message   : 'Missing required parameter "title"'
     };
 
     var expectedDescriptionValueError = {
-      property: 'description',
-      errorCode: 'Value',
-      message: 'Illegal value for parameter "description"'
+      property  : 'description',
+      errorCode : 'Value',
+      message   : 'Illegal value for parameter "description"'
     };
 
     var expectedIsAdminUnsupportedError = {
-      property: 'isAdmin',
-      errorCode: 'Unsupported',
-      message: 'Unsupported parameter "isAdmin"'
+      property  : 'isAdmin',
+      errorCode : 'Unsupported',
+      message   : 'Unsupported parameter "isAdmin"'
     };
 
     it('should return an empty list if no values are illegal', function() {

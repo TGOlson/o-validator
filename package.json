@@ -1,7 +1,7 @@
 {
   "name": "o-validator",
   "version": "0.2.2",
-  "description": "Simple and functional object validator.",
+  "description": "Flexible and lightweight object validation library.",
   "main": "index.js",
   "dependencies": {
     "ramda": "0.17.1"
@@ -22,7 +22,8 @@
     "validator",
     "validation",
     "predicates",
-    "objects"
+    "objects",
+    "schema"
   ],
   "author": "Tyler Olson",
   "license": "ISC",
