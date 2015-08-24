@@ -1,6 +1,6 @@
 {
   "name": "o-validator",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "Flexible and lightweight object validation library.",
   "main": "index.js",
   "dependencies": {
@@ -19,11 +19,13 @@
     "url": "https://github.com/TGOlson/o-validator.git"
   },
   "keywords": [
+    "validate",
     "validator",
     "validation",
     "predicates",
     "objects",
-    "schema"
+    "schema",
+    "json"
   ],
   "author": "Tyler Olson",
   "license": "ISC",
