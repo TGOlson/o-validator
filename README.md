@@ -65,6 +65,12 @@ Type definitions used in this module:
 Predicate :: a -> Boolean
 ```
 
+`Schema` is an object with `Predicate`s as values. These are provided to validation functions, and are used to define how input data will be validated:
+
+```
+Schema :: {k: Predicate}
+```
+
 `ErrorObject` is an object that contains information about a validation failure:
 
 ```
@@ -86,9 +92,9 @@ Note: the type `Predicate` is defined as a function that takes any value and ret
 
 #### Validator.validate
 
-{k: Predicate} -> {k: a} -> Boolean
+Schema -> Object -> Boolean
 
-Validates data object against the provided schema, returning a boolean value to indicate if the arguments were valid.
+Validates a data object against the provided schema, returning a boolean value to indicate if the arguments were valid.
 
 Note: when partially applied with a schema, this function produces a `Predicate`. As such, it can be used to recursively validate objects with nested properties.
 
@@ -99,7 +105,7 @@ Validator.validate(<schema>, <args>) -> Boolean
 
 #### Validator.getErrors
 
-{k: Predicate} -> {k: a} -> [ErrorObjectWithMessage]
+Schema -> Object -> [ErrorObjectWithMessage]
 
 Returns a list of validation errors produced from validating the data object against the provided schema. Error objects contain information about the validation error, including the offending property, and what sort of validation error occurred (see `Validator.errorCodes`). If no errors are found, the method returns an empty array.
 
@@ -112,7 +118,7 @@ Validator.getErrors(<schema>, <args>) -> [ErrorObjectWithMessage]
 
 #### Validator.validateOrThrow
 
-{k: Predicate} -> {k: a} -> Error or {k: a}
+Schema -> Object -> Error or Object
 
 Throws an error containing information about any validation errors, if found. Otherwise returns the original input arguments.
 
@@ -129,9 +135,9 @@ Validator.validateOrThrow(<schema>, <args>) -> <args>
 
 #### Validator.validateWithErrorHandler
 
- ([ErrorObject] -> b) -> {k: Predicate} -> {k: a} -> Error or {k: a}
+([ErrorObject] -> a) -> Schema -> Object -> a or Object
 
-Low level function for creating a validation with a custom error handler. Invokes the supplied error handler if any validation errors are found, otherwise returns the original arguments. Error handling function will be passed an array `ErrorObject`s.
+Low level function for creating a validation with a custom error handler. Invokes the supplied error handler if any validation errors are found, otherwise returns the original arguments. Error handling function will be passed an array of `ErrorObject`s.
 
 
 #### Validator.addDefaultErrorMessages
@@ -145,7 +151,7 @@ Utility function that adds default error messages to a list of errors. Useful wh
 
 {k: String}
 
-Error codes that define the type of validation error that was found. These are used to populate `ErrorObject.errorCode`. Useful when building a custom validation using `validateWithErrorHandler`.
+Error codes that define the type of validation error that was found. Used to populate `ErrorObject.errorCode`. Useful when building a custom validation using `validateWithErrorHandler`.
 
 ```js
 {
@@ -223,6 +229,7 @@ validateUserProfile({name: 'Tyler', age: 'seventy-million'});
 
 * Property catch-alls: `{'*': R.is(Function)}`
 * Schema validation: `V.testSchema(<schema>) -> null or Error`
+* Validate args (`simple contracts`)
 
 
 ## Contributing
