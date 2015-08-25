@@ -29,7 +29,7 @@ var schema = {
   tags        : R.is(Array)
 };
 
-var r = V.validate(schema, {
+V.validate(schema, {
   title       : 'Hi There',
   description : 'This is a great post.',
   isActive    : true
