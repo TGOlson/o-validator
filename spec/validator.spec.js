@@ -43,13 +43,8 @@ describe('Validator', function() {
     });
 
     it('should recursively validate', function() {
-      pattern.nested = Validator.validate({
-        foo: R.is(String)
-      });
-
-      args.nested = {
-        foo: 'bar'
-      };
+      pattern.nested = Validator.validate({foo: R.is(String)});
+      args.nested = {foo: 'bar'};
 
       result = Validator.validate(pattern, args);
       expect(result).toBe(true);
@@ -106,21 +101,21 @@ describe('Validator', function() {
 
   describe('getErrors', function() {
     var expectedTitleRequiredError = {
-      property: 'title',
-      errorCode: 'Required',
-      message: 'Missing required parameter: title'
+      property  : 'title',
+      errorCode : 'REQUIRED',
+      message   : 'Missing required parameter "title"'
     };
 
     var expectedDescriptionValueError = {
-      property: 'description',
-      errorCode: 'Value',
-      message: 'Illegal value for parameter: description'
+      property  : 'description',
+      errorCode : 'VALUE',
+      message   : 'Illegal value for parameter "description"'
     };
 
     var expectedIsAdminUnsupportedError = {
-      property: 'isAdmin',
-      errorCode: 'Unsupported',
-      message: 'Unsupported parameter: isAdmin'
+      property  : 'isAdmin',
+      errorCode : 'UNSUPPORTED',
+      message   : 'Unsupported parameter "isAdmin"'
     };
 
     it('should return an empty list if no values are illegal', function() {
@@ -168,62 +163,34 @@ describe('Validator', function() {
   });
 
   describe('validateOrThrow', function() {
-    it('should throw an error if the arguments are invalid', function() {
+    it('should throw an error if one of the arguments are invalid', function() {
+      args.title = null;
+
+      var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
+      expect(validateOrThrow).toThrow('Validation Error: Illegal value for parameter "title"');
+    });
+
+    it('should throw an error if multiple the arguments are invalid', function() {
       args.title = null;
       args.description = null;
 
       var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
-      expect(validateOrThrow).toThrow('Illegal value for parameter: title');
+      expect(validateOrThrow).toThrow('Validation Error: Illegal value for parameter "title", Illegal value for parameter "description"');
     });
 
     it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrow = Validator.validateOrThrow(pattern, args);
-      expect(validateOrThrow).toBe(args);
+      expect(Validator.validateOrThrow(pattern, args)).toBe(args);
     });
   });
 
-  describe('validateOrThrowAll', function() {
-    it('should throw an error if the arguments are invalid', function() {
-      args.title = null;
-      args.description = null;
-
-      var validateOrThrowAll = Validator.validateOrThrowAll.bind(null, pattern, args);
-      expect(validateOrThrowAll).toThrow('Illegal value for parameter: title; Illegal value for parameter: description');
-    });
-
-    it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrowAll = Validator.validateOrThrowAll(pattern, args);
-      expect(validateOrThrowAll).toBe(args);
-    });
-  });
-
-  describe('custom', function() {
-    var message;
-
-    beforeEach(function() {
-      message = 'That ain\'t the right title bruh.';
-      pattern.title = Validator.custom({
-        message   : message,
-        predicate : R.is(String),
-        required  : true
+  describe('errorCodes', function() {
+    it('should be a set of error codes', function() {
+      expect(Validator.errorCodes).toEqual({
+        REQUIRED    : 'REQUIRED',
+        UNSUPPORTED : 'UNSUPPORTED',
+        VALUE       : 'VALUE',
+        UNKNOWN     : 'UNKNOWN'
       });
-    });
-
-    it('should throw a custom error if the arguments are invalid', function() {
-      args.title = null;
-
-      var validateOrThrowCustom = Validator.validateOrThrow.bind(null, pattern, args);
-      expect(validateOrThrowCustom).toThrow(message);
-    });
-
-    it('should throw a validation error if the custom arguments are invalid', function() {
-      var validateCustom = Validator.custom.bind(null, {});
-      expect(validateCustom).toThrow('Missing required parameter: predicate');
-    });
-
-    it('should return the arguments if the arguments are valid', function() {
-      var validateOrThrowCustom = Validator.validateOrThrow(pattern, args);
-      expect(validateOrThrowCustom).toBe(args);
     });
   });
 });

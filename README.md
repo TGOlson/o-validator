@@ -1,10 +1,10 @@
 # o-validator
 
-[![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
+[![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Stories in Ready][waffle-image]][waffle-url]
 
-Simple and functional object validator.
+Flexible and lightweight object validation library.
 
-Validate objects with common predicate functions. No special syntax required.
+Build validators from a generic low-level API, or use helpful pre-built validation functions. This library makes no assumptions about the structure of the provided data, and instead lets the consumer define how their data should be inspected by validating properties with common predicate functions. Based off of functional principles, no special syntax required.
 
 ## Install
 
@@ -12,122 +12,158 @@ Validate objects with common predicate functions. No special syntax required.
 $ npm install o-validator --save
 ```
 
-Run the specs
-
-```
-$ npm test
-```
-
 ## Usage
 
 ```js
+var V = require('o-validator');
+var R = require('ramda');
 
-var Validator = require('o-validator'),
-    R         = require('ramda');
+var hasLengthGreaterThan = R.curry(function(n, x) {
+  return R.propSatisfies(R.lt(n), 'length', x);
+});
 
-var pattern = {
-  title       : Validator.required(R.is(String))
+var schema = {
+  title       : V.required(R.is(String)),
   description : R.allPass([R.is(String), hasLengthGreaterThan(5)]),
   isActive    : R.is(Boolean),
   tags        : R.is(Array)
 };
 
-Validator.validate(pattern, {
+var r = V.validate(schema, {
   title       : 'Hi There',
   description : 'This is a great post.',
   isActive    : true
-  // tags are not defined - but that is valid, validator treats them as optional
+  // tags are not defined - but that is OK, validator treats them as optional
 });
 // => true
 ```
 
-The validator runs each argument against the defined validation pattern, asserting a true outcome for each. Properties defined in the validation pattern are assumed to be optional unless declared otherwise using `Validator.required`.
+The validator runs each argument against the defined validation schema, asserting a true outcome for each. Properties defined in the validation schema are assumed to be optional unless declared otherwise using `Validator.required`.
 
 Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as [ramda](https://github.com/ramda/ramda).
 
+#### Functions are curried by default
 
-#### All function are curried
-
-All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is super helpful in general, and in the case of this library it makes it possible to create validator functions that can be saved and run at a later time.
+All methods in this library are [curried](http://en.wikipedia.org/wiki/Currying), which means that if a method is called without all the arguments it requires, the return value will be a function that takes the remaining arguments. This is very helpful in general, and in the case of this library it makes it possible to create validator functions that can be saved and used at a later time.
 
 For example, one could write the previous validation like this:
 
 ```js
-var Validator = require('o-validator');
+var V = require('o-validator');
 
-var validadeArgs = Validator.validate(<pattern>);
+// construct validation function and save it for later
+var validateArgs = V.validate(<schema>);
 
-validadeArgs(<args>);
-// => Boolean
+// use (and re-use) previously constructed validation function
+validadeArgs(<object>); // => Boolean
 ```
 
-## Available Methods
+## Types
 
-As noted previously, all methods in the library are curried. The type signatures are written to reflect that.
+Type definitions used in this module:
 
-Note: the type `Predicate` is defined as a function that takes any value and returns a boolean (`(a -> Boolean)`).
+```hs
+-- Function that takes a value and produces a boolean
+Predicate (a -> Boolean)
+```
 
+```hs
+-- An object with Predicates as values. These are provided to validation
+-- functions, and are used to define how input data will be validated
+Schema {k: Predicate}
+```
+
+```hs
+-- An object that contains information about a validation failure
+ErrorObject {property: String, errorCode: String}
+```
+
+```hs
+-- An ErrorObject that also includes a message property
+ErrorObjectWithMessage {property: String, errorCode: String, message: String}
+```
+
+## Docs
+
+As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that.
 
 #### Validator.validate
+`Schema -> Object -> Boolean`
 
-{k: Predicate} -> {k: a} -> Boolean
+Validates a data object against the provided schema, returning a boolean value to indicate if the supplied data object is valid.
 
-Validates arguments against the provided pattern.
+*Note: when partially applied with a schema, this function produces a `Predicate`. As such, it can be used to recursively validate objects with nested properties.*
+
 ```js
-Validator.validate(<pattern>, <args>) -> Boolean
+Validator.validate(<schema>, <object>) -> Boolean
 ```
-
 
 #### Validator.getErrors
+`Schema -> Object -> [ErrorObjectWithMessage]`
 
-{k: Predicate} -> {k: a} -> [Object]
+Returns a list of validation errors produced from validating the data object against the provided schema. Error objects contain information about the validation error, including the offending property, and what sort of validation error occurred (see `Validator.errorCodes`). If no errors are found, the method returns an empty array.
 
-Returns a list of errors for a validation pattern with values. Errors are objects with information about the original call. If no errors are found, the method returns an empty array.
+*Note: this method attaches default error messages to the error objects.*
+
 ```js
-Validator.getErrors(<pattern>, <args>) -> [Object]
-
-// Error object is in the form of:
-// {
-//   property  : String,
-//   errorCode : String,
-//   message   : String
-// }
+Validator.getErrors(<schema>, <object>) -> [ErrorObjectWithMessage]
 ```
-
 
 #### Validator.validateOrThrow
+`Schema -> Object -> Error or Object`
 
-{k: Predicate} -> {k: a} -> Error or {k: a}
+Throws an error containing information about any validation errors, if found. Otherwise returns the original input arguments.
 
-Throws the first error found if any predicate returns false, otherwise returns the original input arguments.
+*Note: the final error message is built using the default error messages.*
+
 ```js
 // Invalid args
-Validator.validateOrThrow(<pattern>, <args>) -> Error
+Validator.validateOrThrow(<schema>, <object>) -> Error
 
 // Valid args
-Validator.validateOrThrow(<pattern>, <args>) -> <args>
+Validator.validateOrThrow(<schema>, <object>) -> <object>
 ```
 
+#### Validator.validateWithErrorHandler
+`([ErrorObject] -> a) -> Schema -> Object -> a or Object`
 
-#### Validator.validateOrThrowAll
+Low level function for creating a validation with a custom error handler. Invokes the supplied error handler if any validation errors are found, otherwise returns the original arguments. Error handling function will be passed an array of `ErrorObject`s.
 
-{k: Predicate} -> {k: a} -> Error or {k: a}
+*Note: error handler should be a function that takes an array of errors, and does something with them `[ErrorObject] -> a`.*
 
-Throws a list of errors if any predicate returns false, otherwise returns the original input arguments.
 ```js
 // Invalid args
-Validator.validateOrThrowAll(<pattern>, <args>) -> Error
+Validator.validateWithErrorHandler(<error-handler>, <schema>, <object>) -> <error-handler-result>
 
 // Valid args
-Validator.validateOrThrowAll(<pattern>, <args>) -> <args>
+Validator.validateWithErrorHandler(<error-handler>, <schema>, <object>) -> <object>
 ```
 
+#### Validator.addDefaultErrorMessages
+`[ErrorObject] -> [ErrorObjectWithMessage]`
+
+Utility function that adds default error messages to a list of errors. Useful when building a custom validation using `validateWithErrorHandler`.
+
+#### Validator.errorCodes
+`{k: String}`
+
+Error codes that define the type of validation error that was found. Used to populate `ErrorObject.errorCode`. Useful when building a custom validation using `validateWithErrorHandler`.
+
+```js
+{
+  REQUIRED    : 'REQUIRED',
+  UNSUPPORTED : 'UNSUPPORTED',
+  VALUE       : 'VALUE',
+  UNKNOWN     : 'UNKNOWN'
+}
+```
 
 #### Validator.required
 
-Predicate -> {predicate: Predicate, required: true}
+(type not exposed, implementation details are internal to this library)
 
-Returns an object that specifies the predicate and that the value is required. This should be used to denote that a property is required, since otherwise properties as assumed to be optional.
+Specifies that a property in the schema is required. Note: by default properties as assumed to be optional.
+
 ```js
 var validateArgs = Validator.validate({
   title       : Validator.required(isString)
@@ -138,27 +174,67 @@ var validateArgs = Validator.validate({
 // while the description property is optional
 ```
 
+## In depth example
 
-#### Validator.custom
+As noted above, this library aims to provide a generic low-level API so that almost any use case can be accommodated. For example, we could easily build a validation function that throws errors using the default error message library, but also includes information about the original top level object in its error response.
 
-{predicate: p, ...k: v} -> Error | {predicate: p, ...k: v}
-
-Creates an object that specifies the custom validation rules.
-Note: a predicate must be supplied
 ```js
-var validateArgs = Validator.validate({
-  title       : Validator.custom({
-    predicate : isString,
-    message   : 'Not a valid title, dude!',
-    required  : true
-  }),
-  description : isString
+// custom-validator.js
+var V = require('o-validator');
+var R = require('ramda');
+
+var getDefaultErrorMessages = R.compose(R.pluck('message'), V.addDefaultErrorMessages);
+
+// custom validation error handler
+// prefixes error messages with a provided top level identifier
+var customErrorHandler = R.curry(function(identifier, errors) {
+  var errorMessages = getDefaultErrorMessages(errors);
+
+  var message = 'Could not validate "' + identifier + '" - ' + R.join('; ', errorMessages);
+  throw new Error(message);
 });
 
-// when the validator is invoked, a title property must be supplied,
-// if it is not supplied or does not satisfy the predicate, the custom error message will be throw
-// while the description property is optional
+// custom validation function
+var validateWithIdentifier = R.curry(function(identifier, schema, props) {
+  return V.validateWithErrorHandler(customErrorHandler(identifier), schema, props);
+});
+
+module.exports = validateWithIdentifier;
 ```
+
+By simply glueing together a few functions, we now have a customized validation function ready to be re-used in our project.
+
+```js
+// user-profile.js
+var R = require('ramda');
+
+var validateWithIdentifier = require('./custom-validator');
+
+var validateUserProfile = validateWithIdentifier('userProfile', {
+  name : R.is(String),
+  age  : R.is(Number)
+});
+
+validateUserProfile({name: 'Tyler', age: 'seventy-million'});
+// => Error: Could not validate "userProfile" - Illegal value for parameter "age"
+```
+
+## Contributing
+
+* Install dependencies
+
+```
+$ npm install
+```
+
+* Run the specs
+
+```
+$ npm test
+```
+
+* Make a fix.
+* Submit a PR.
 
 
 [travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
@@ -166,3 +242,6 @@ var validateArgs = Validator.validate({
 
 [coveralls-image]: https://coveralls.io/repos/TGOlson/o-validator/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/r/TGOlson/o-validator?branch=master
+
+[waffle-image]: https://badge.waffle.io/tgolson/o-validator.png?label=ready&title=Ready
+[waffle-url]: https://waffle.io/tgolson/o-validator
