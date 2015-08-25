@@ -64,30 +64,33 @@ Type definitions used in this module:
 
 ```hs
 -- Function that takes a value and produces a boolean
-Predicate :: a -> Boolean
+Predicate (a -> Boolean)
 ```
 
 ```hs
 -- An object with Predicates as values. These are provided to validation
 -- functions, and are used to define how input data will be validated
-Schema :: {k: Predicate}
+Schema {k: Predicate}
 ```
 
 ```hs
 -- An object that contains information about a validation failure
-ErrorObject :: {property: String, errorCode: String}
+ErrorObject {property: String, errorCode: String}
 ```
 
 ```hs
 -- An ErrorObject that also includes a message property
-ErrorObjectWithMessage :: {property: String, errorCode: String, message: String}
+ErrorObjectWithMessage {property: String, errorCode: String, message: String}
 ```
 
 ## Docs
 
-As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that. *Note: function definitions are written in the form: `<function name> :: <type signature>`.*
+As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that.
 
-#### `Validator.validate :: Schema -> Object -> Boolean`
+*Note: function definitions are written in the form: `<function-name> :: <type-signature>`.*
+
+#### Validator.validate
+`Schema -> Object -> Boolean`
 
 Validates a data object against the provided schema, returning a boolean value to indicate if the supplied data object is valid.
 
@@ -97,7 +100,8 @@ Validates a data object against the provided schema, returning a boolean value t
 Validator.validate(<schema>, <object>) -> Boolean
 ```
 
-#### `Validator.getErrors :: Schema -> Object -> [ErrorObjectWithMessage]`
+#### Validator.getErrors
+`Schema -> Object -> [ErrorObjectWithMessage]`
 
 Returns a list of validation errors produced from validating the data object against the provided schema. Error objects contain information about the validation error, including the offending property, and what sort of validation error occurred (see `Validator.errorCodes`). If no errors are found, the method returns an empty array.
 
@@ -107,7 +111,8 @@ Returns a list of validation errors produced from validating the data object aga
 Validator.getErrors(<schema>, <object>) -> [ErrorObjectWithMessage]
 ```
 
-#### `Validator.validateOrThrow :: Schema -> Object -> Error or Object`
+#### Validator.validateOrThrow
+`Schema -> Object -> Error or Object`
 
 Throws an error containing information about any validation errors, if found. Otherwise returns the original input arguments.
 
@@ -121,7 +126,8 @@ Validator.validateOrThrow(<schema>, <object>) -> Error
 Validator.validateOrThrow(<schema>, <object>) -> <object>
 ```
 
-#### `Validator.validateWithErrorHandler :: ([ErrorObject] -> a) -> Schema -> Object -> a or Object`
+#### Validator.validateWithErrorHandler
+`([ErrorObject] -> a) -> Schema -> Object -> a or Object`
 
 Low level function for creating a validation with a custom error handler. Invokes the supplied error handler if any validation errors are found, otherwise returns the original arguments. Error handling function will be passed an array of `ErrorObject`s.
 
@@ -135,11 +141,13 @@ Validator.validateWithErrorHandler(<error-handler>, <schema>, <object>) -> <erro
 Validator.validateWithErrorHandler(<error-handler>, <schema>, <object>) -> <object>
 ```
 
-#### `Validator.addDefaultErrorMessages :: [ErrorObject] -> [ErrorObjectWithMessage]`
+#### Validator.addDefaultErrorMessages
+`[ErrorObject] -> [ErrorObjectWithMessage]`
 
 Utility function that adds default error messages to a list of errors. Useful when building a custom validation using `validateWithErrorHandler`.
 
-#### `Validator.errorCodes :: {k: String}`
+#### Validator.errorCodes
+`{k: String}`
 
 Error codes that define the type of validation error that was found. Used to populate `ErrorObject.errorCode`. Useful when building a custom validation using `validateWithErrorHandler`.
 
