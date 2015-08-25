@@ -18,14 +18,18 @@ $ npm install o-validator --save
 var V = require('o-validator');
 var R = require('ramda');
 
+var hasLengthGreaterThan = R.curry(function(n, x) {
+  return R.propSatisfies(R.lt(n), 'length');
+});
+
 var schema = {
-  title       : V.required(R.is(String))
-  description : R.allPass([R.is(String), R.propSatisfies(R.gt(5), 'length')]),
+  title       : V.required(R.is(String)),
+  description : R.allPass([R.is(String), hasLengthGreaterThan(5)]),
   isActive    : R.is(Boolean),
   tags        : R.is(Array)
 };
 
-V.validate(schema, {
+var r = V.validate(schema, {
   title       : 'Hi There',
   description : 'This is a great post.',
   isActive    : true
@@ -37,7 +41,6 @@ V.validate(schema, {
 The validator runs each argument against the defined validation schema, asserting a true outcome for each. Properties defined in the validation schema are assumed to be optional unless declared otherwise using `Validator.required`.
 
 Note: this module is best used with a functional library to provide predicates (isString, isNull, etc.), such as [ramda](https://github.com/ramda/ramda).
-
 
 #### Functions are curried by default
 
@@ -52,104 +55,91 @@ var V = require('o-validator');
 var validateArgs = V.validate(<schema>);
 
 // use (and re-use) previously constructed validation function
-validadeArgs(<args>); // => Boolean
+validadeArgs(<object>); // => Boolean
 ```
 
 ## Types
 
 Type definitions used in this module:
 
-`Predicate` is a function that takes a value of produces a boolean:
-
-```
+```hs
+-- Function that takes a value and produces a boolean
 Predicate :: a -> Boolean
 ```
 
-`Schema` is an object with `Predicate`s as values. These are provided to validation functions, and are used to define how input data will be validated:
-
-```
+```hs
+-- An object with Predicates as values. These are provided to validation
+-- functions, and are used to define how input data will be validated
 Schema :: {k: Predicate}
 ```
 
-`ErrorObject` is an object that contains information about a validation failure:
-
-```
+```hs
+-- An object that contains information about a validation failure
 ErrorObject :: {property: String, errorCode: String}
 ```
 
-`ErrorObjectWithMessage` is an error object that contains a message property as well:
-
-```
+```hs
+-- An ErrorObject that also includes a message property
 ErrorObjectWithMessage :: {property: String, errorCode: String, message: String}
 ```
 
 ## Docs
 
-As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that.
+As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that. *Note: function definitions are written in the form: `<function name> :: <type signature>`.*
 
-Note: the type `Predicate` is defined as a function that takes any value and returns a boolean (`a -> Boolean`).
+#### `Validator.validate :: Schema -> Object -> Boolean`
 
+Validates a data object against the provided schema, returning a boolean value to indicate if the supplied data object is valid.
 
-#### Validator.validate
-
-Schema -> Object -> Boolean
-
-Validates a data object against the provided schema, returning a boolean value to indicate if the arguments were valid.
-
-Note: when partially applied with a schema, this function produces a `Predicate`. As such, it can be used to recursively validate objects with nested properties.
+*Note: when partially applied with a schema, this function produces a `Predicate`. As such, it can be used to recursively validate objects with nested properties.*
 
 ```js
-Validator.validate(<schema>, <args>) -> Boolean
+Validator.validate(<schema>, <object>) -> Boolean
 ```
 
-
-#### Validator.getErrors
-
-Schema -> Object -> [ErrorObjectWithMessage]
+#### `Validator.getErrors :: Schema -> Object -> [ErrorObjectWithMessage]`
 
 Returns a list of validation errors produced from validating the data object against the provided schema. Error objects contain information about the validation error, including the offending property, and what sort of validation error occurred (see `Validator.errorCodes`). If no errors are found, the method returns an empty array.
 
-Note: this method attaches default error messages to the error objects.
+*Note: this method attaches default error messages to the error objects.*
 
 ```js
-Validator.getErrors(<schema>, <args>) -> [ErrorObjectWithMessage]
+Validator.getErrors(<schema>, <object>) -> [ErrorObjectWithMessage]
 ```
 
-
-#### Validator.validateOrThrow
-
-Schema -> Object -> Error or Object
+#### `Validator.validateOrThrow :: Schema -> Object -> Error or Object`
 
 Throws an error containing information about any validation errors, if found. Otherwise returns the original input arguments.
 
-Note: the final error message is built off of the default error messages.
+*Note: the final error message is built using the default error messages.*
 
 ```js
 // Invalid args
-Validator.validateOrThrow(<schema>, <args>) -> Error
+Validator.validateOrThrow(<schema>, <object>) -> Error
 
 // Valid args
-Validator.validateOrThrow(<schema>, <args>) -> <args>
+Validator.validateOrThrow(<schema>, <object>) -> <object>
 ```
 
-
-#### Validator.validateWithErrorHandler
-
-([ErrorObject] -> a) -> Schema -> Object -> a or Object
+#### `Validator.validateWithErrorHandler :: ([ErrorObject] -> a) -> Schema -> Object -> a or Object`
 
 Low level function for creating a validation with a custom error handler. Invokes the supplied error handler if any validation errors are found, otherwise returns the original arguments. Error handling function will be passed an array of `ErrorObject`s.
 
+*Note: error handler should be a function that takes an array of errors, and does something with them `[ErrorObject] -> a`.*
 
-#### Validator.addDefaultErrorMessages
+```js
+// Invalid args
+Validator.validateWithErrorHandler(<error-handler>, <schema>, <object>) -> <error-handler-result>
 
-[ErrorObject] -> [ErrorObjectWithMessage]
+// Valid args
+Validator.validateWithErrorHandler(<error-handler>, <schema>, <object>) -> <object>
+```
+
+#### `Validator.addDefaultErrorMessages :: [ErrorObject] -> [ErrorObjectWithMessage]`
 
 Utility function that adds default error messages to a list of errors. Useful when building a custom validation using `validateWithErrorHandler`.
 
-
-#### Validator.errorCodes
-
-{k: String}
+#### `Validator.errorCodes :: {k: String}`
 
 Error codes that define the type of validation error that was found. Used to populate `ErrorObject.errorCode`. Useful when building a custom validation using `validateWithErrorHandler`.
 
@@ -161,7 +151,6 @@ Error codes that define the type of validation error that was found. Used to pop
   UNKNOWN     : 'Unknown'
 }
 ```
-
 
 #### Validator.required
 
@@ -178,7 +167,6 @@ var validateArgs = Validator.validate({
 // when the validator is invoked, a title property must be supplied,
 // while the description property is optional
 ```
-
 
 ## In depth example
 
@@ -227,10 +215,9 @@ validateUserProfile({name: 'Tyler', age: 'seventy-million'});
 
 ## TODO
 
-* Property catch-alls: `{'*': R.is(Function)}`
-* Schema validation: `V.testSchema(<schema>) -> null or Error`
+* Property catch-alls: `{'*': <predicte>`
+* Schema validation: `V.testSchema(<schema>) -> null or Error` (could use catch-alls)
 * Validate args (`simple contracts`)
-
 
 ## Contributing
 
@@ -245,9 +232,6 @@ Run the specs
 ```
 $ npm test
 ```
-
-
-
 
 [travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
 [travis-url]: https://travis-ci.org/TGOlson/o-validator
