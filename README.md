@@ -2,9 +2,9 @@
 
 [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Stories in Ready][waffle-image]][waffle-url]
 
-Flexible and lightweight object validation library. Based off of functional principles.
+Flexible and lightweight object validation library.
 
-Build validators from a generic low-level API, or use helpful pre-built validators. This library makes no assumptions about the structure of the provided data, and instead lets the consumer define how their data should be inspected by validating properties with common predicate functions. No special syntax required.
+Build validators from a generic low-level API, or use helpful pre-built validation functions. This library makes no assumptions about the structure of the provided data, and instead lets the consumer define how their data should be inspected by validating properties with common predicate functions. Based off of functional principles, no special syntax required.
 
 ## Install
 
