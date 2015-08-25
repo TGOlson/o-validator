@@ -1,6 +1,6 @@
 # o-validator
 
-[![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
+[![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Stories in Ready][waffle-image]][waffle-url]
 
 Flexible and lightweight object validation library. Based off of functional principles.
 
@@ -242,3 +242,6 @@ $ npm test
 
 [coveralls-image]: https://coveralls.io/repos/TGOlson/o-validator/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/r/TGOlson/o-validator?branch=master
+
+[waffle-image]: https://badge.waffle.io/tgolson/o-validator.png?label=ready&title=Ready
+[waffle-url]: https://waffle.io/tgolson/o-validator
