@@ -102,19 +102,19 @@ describe('Validator', function() {
   describe('getErrors', function() {
     var expectedTitleRequiredError = {
       property  : 'title',
-      errorCode : 'Required',
+      errorCode : 'REQUIRED',
       message   : 'Missing required parameter "title"'
     };
 
     var expectedDescriptionValueError = {
       property  : 'description',
-      errorCode : 'Value',
+      errorCode : 'VALUE',
       message   : 'Illegal value for parameter "description"'
     };
 
     var expectedIsAdminUnsupportedError = {
       property  : 'isAdmin',
-      errorCode : 'Unsupported',
+      errorCode : 'UNSUPPORTED',
       message   : 'Unsupported parameter "isAdmin"'
     };
 
@@ -180,6 +180,17 @@ describe('Validator', function() {
 
     it('should return the arguments if the arguments are valid', function() {
       expect(Validator.validateOrThrow(pattern, args)).toBe(args);
+    });
+  });
+
+  describe('errorCodes', function() {
+    it('should be a set of error codes', function() {
+      expect(Validator.errorCodes).toEqual({
+        REQUIRED    : 'REQUIRED',
+        UNSUPPORTED : 'UNSUPPORTED',
+        VALUE       : 'VALUE',
+        UNKNOWN     : 'UNKNOWN'
+      });
     });
   });
 });

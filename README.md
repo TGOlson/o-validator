@@ -19,7 +19,7 @@ var V = require('o-validator');
 var R = require('ramda');
 
 var hasLengthGreaterThan = R.curry(function(n, x) {
-  return R.propSatisfies(R.lt(n), 'length');
+  return R.propSatisfies(R.lt(n), 'length', x);
 });
 
 var schema = {
@@ -153,10 +153,10 @@ Error codes that define the type of validation error that was found. Used to pop
 
 ```js
 {
-  REQUIRED    : 'Required',
-  UNSUPPORTED : 'Unsupported',
-  VALUE       : 'Value',
-  UNKNOWN     : 'Unknown'
+  REQUIRED    : 'REQUIRED',
+  UNSUPPORTED : 'UNSUPPORTED',
+  VALUE       : 'VALUE',
+  UNKNOWN     : 'UNKNOWN'
 }
 ```
 
