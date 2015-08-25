@@ -2,7 +2,7 @@
 
 [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
-Flexible and lightweight object validation library.
+Flexible and lightweight object validation library. Based off of functional principles.
 
 Build validators from a generic low-level API, or use helpful pre-built validators. This library makes no assumptions about the structure of the provided data, and instead lets the consumer define how their data should be inspected by validating properties with common predicate functions. No special syntax required.
 
@@ -86,8 +86,6 @@ ErrorObjectWithMessage {property: String, errorCode: String, message: String}
 ## Docs
 
 As noted previously, all provided methods in this library are curried. The type signatures are written to reflect that.
-
-*Note: function definitions are written in the form: `<function-name> :: <type-signature>`.*
 
 #### Validator.validate
 `Schema -> Object -> Boolean`
@@ -221,25 +219,23 @@ validateUserProfile({name: 'Tyler', age: 'seventy-million'});
 // => Error: Could not validate "userProfile" - Illegal value for parameter "age"
 ```
 
-## TODO
-
-* Property catch-alls: `{'*': <predicte>`
-* Schema validation: `V.testSchema(<schema>) -> null or Error` (could use catch-alls)
-* Validate args (`simple contracts`)
-
 ## Contributing
 
-Install dependencies
+* Install dependencies
 
 ```
 $ npm install
 ```
 
-Run the specs
+* Run the specs
 
 ```
 $ npm test
 ```
+
+* Make a fix.
+* Submit a PR.
+
 
 [travis-image]: https://travis-ci.org/TGOlson/o-validator.svg?branch=master
 [travis-url]: https://travis-ci.org/TGOlson/o-validator
