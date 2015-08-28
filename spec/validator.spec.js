@@ -2,15 +2,15 @@
 
 var R = require('ramda');
 
-var Validator = require('../lib/validator');
+var V = require('../lib/validator');
 
-describe('Validator', function() {
-  var pattern,
+describe('V', function() {
+  var schema,
       args,
       result;
 
   beforeEach(function() {
-    pattern = {
+    schema = {
       title: R.is(String),
       description: R.is(String),
       isActive: R.is(Boolean)
@@ -24,77 +24,77 @@ describe('Validator', function() {
 
   describe('validate', function() {
     it('should return true if all provided arguments are valid', function() {
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(true);
     });
 
     it('should return false if not all provided arguments are valid', function() {
       args.isActive = null;
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(false);
     });
 
     it('should return false if any additional arguments are present', function() {
       args.isAdmin = true;
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(false);
     });
 
     it('should recursively validate', function() {
-      pattern.nested = Validator.validate({foo: R.is(String)});
+      schema.nested = V.validate({foo: R.is(String)});
       args.nested = {foo: 'bar'};
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(true);
     });
   });
 
   describe('required', function() {
     beforeEach(function() {
-      pattern.title = Validator.required(R.is(String));
+      schema.title = V.required(R.is(String));
     });
 
     it('should return false if a required argument is missing', function() {
-      result = Validator.validate(pattern, {});
+      result = V.validate(schema, {});
       expect(result).toBe(false);
     });
 
     it('should return true if no arguments are missing or illegal', function() {
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(true);
     });
 
     it('should return false if no arguments are missing but some are illegal', function() {
       args.title = 123;
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(false);
     });
 
     it('should return false if any additional arguments are present', function() {
       args.isAdmin = true;
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(false);
     });
 
     it('should return false if not all required arguments are present', function() {
-      pattern.description = Validator.required(R.is(String));
+      schema.description = V.required(R.is(String));
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(false);
     });
 
     it('should recursively validate', function() {
-      pattern.nested = Validator.required(Validator.validate({
-        foo: Validator.required(R.is(String))
+      schema.nested = V.required(V.validate({
+        foo: V.required(R.is(String))
       }));
 
       args.nested = {foo: 'bar'};
 
-      result = Validator.validate(pattern, args);
+      result = V.validate(schema, args);
       expect(result).toBe(true);
     });
   });
@@ -119,40 +119,40 @@ describe('Validator', function() {
     };
 
     it('should return an empty list if no values are illegal', function() {
-      var errors = Validator.getErrors(pattern, args);
+      var errors = V.getErrors(schema, args);
       expect(errors).toEqual([]);
     });
 
     it('should return an error when missing a required property', function() {
-      pattern.title = Validator.required(R.is(String));
+      schema.title = V.required(R.is(String));
       args.title = undefined;
 
-      var errors = Validator.getErrors(pattern, args);
+      var errors = V.getErrors(schema, args);
       expect(errors).toEqual([expectedTitleRequiredError]);
     });
 
     it('should return an error when a property does not satisfy the predicate', function() {
       args.description = 123;
 
-      var errors = Validator.getErrors(pattern, args);
+      var errors = V.getErrors(schema, args);
       expect(errors).toEqual([expectedDescriptionValueError]);
     });
 
     it('should return an error when a property is unexpected', function() {
       args.isAdmin = true;
 
-      var errors = Validator.getErrors(pattern, args);
+      var errors = V.getErrors(schema, args);
 
       expect(errors).toEqual([expectedIsAdminUnsupportedError]);
     });
 
     it('should return a list of errors when passed illegal values', function() {
-      pattern.title = Validator.required(R.is(String));
+      schema.title = V.required(R.is(String));
       args.title = undefined;
       args.description = 123;
       args.isAdmin = true;
 
-      var errors = Validator.getErrors(pattern, args);
+      var errors = V.getErrors(schema, args);
 
       expect(errors).toEqual([
         expectedTitleRequiredError,
@@ -166,7 +166,7 @@ describe('Validator', function() {
     it('should throw an error if one of the arguments are invalid', function() {
       args.title = null;
 
-      var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
+      var validateOrThrow = V.validateOrThrow.bind(null, schema, args);
       expect(validateOrThrow).toThrow('Validation Error: Illegal value for parameter "title"');
     });
 
@@ -174,18 +174,18 @@ describe('Validator', function() {
       args.title = null;
       args.description = null;
 
-      var validateOrThrow = Validator.validateOrThrow.bind(null, pattern, args);
+      var validateOrThrow = V.validateOrThrow.bind(null, schema, args);
       expect(validateOrThrow).toThrow('Validation Error: Illegal value for parameter "title", Illegal value for parameter "description"');
     });
 
     it('should return the arguments if the arguments are valid', function() {
-      expect(Validator.validateOrThrow(pattern, args)).toBe(args);
+      expect(V.validateOrThrow(schema, args)).toBe(args);
     });
   });
 
   describe('errorCodes', function() {
     it('should be a set of error codes', function() {
-      expect(Validator.errorCodes).toEqual({
+      expect(V.errorCodes).toEqual({
         REQUIRED    : 'REQUIRED',
         UNSUPPORTED : 'UNSUPPORTED',
         VALUE       : 'VALUE',
