@@ -112,10 +112,22 @@ describe('V', function() {
       message   : 'Illegal value for parameter "description"'
     };
 
+    var expectedFooValueError = {
+      property  : 'foo',
+      errorCode : 'VALUE',
+      message   : 'Illegal value for parameter "foo"'
+    };
+
     var expectedIsAdminUnsupportedError = {
       property  : 'isAdmin',
       errorCode : 'UNSUPPORTED',
       message   : 'Unsupported parameter "isAdmin"'
+    };
+
+    var expectedFooUnsupportedError = {
+      property  : 'foo',
+      errorCode : 'UNSUPPORTED',
+      message   : 'Unsupported parameter "foo"'
     };
 
     it('should return an empty list if no values are illegal', function() {
@@ -132,18 +144,27 @@ describe('V', function() {
     });
 
     it('should return an error when a property does not satisfy the predicate', function() {
+      schema.foo = R.is(String);
       args.description = 123;
+      args.foo = 123;
 
       var errors = V.getErrors(schema, args);
-      expect(errors).toEqual([expectedDescriptionValueError]);
+      expect(errors).toEqual([
+        expectedDescriptionValueError,
+        expectedFooValueError
+      ]);
     });
 
     it('should return an error when a property is unexpected', function() {
       args.isAdmin = true;
+      args.foo = true;
 
       var errors = V.getErrors(schema, args);
 
-      expect(errors).toEqual([expectedIsAdminUnsupportedError]);
+      expect(errors).toEqual([
+        expectedIsAdminUnsupportedError,
+        expectedFooUnsupportedError
+      ]);
     });
 
     it('should return a list of errors when passed illegal values', function() {
