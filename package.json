@@ -4,7 +4,7 @@
   "description": "Flexible and lightweight object validation library.",
   "main": "index.js",
   "dependencies": {
-    "ramda": "0.17.1"
+    "ramda": "0.20.x"
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
